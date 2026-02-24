@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PetugasController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\AddressController;
 
 /*
 |--------------------------------------------------------------------------
@@ -115,7 +116,7 @@ Route::middleware('auth')->group(function () {
 
     // Profile
     Route::get('/profile', function () {
-        return view('profile');
+        return view('user.profile');
     })->name('profile');
 
 
@@ -172,3 +173,43 @@ Route::middleware('auth')->group(function () {
         ->name('petugas.destroy');
 
 });
+
+/*
+|--------------------------------------------------------------------------
+| CART
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/cart', [App\Http\Controllers\CartController::class, 'index'])
+    ->name('cart.index');
+
+Route::post('/cart/add/{id}', [App\Http\Controllers\CartController::class, 'add'])
+    ->name('cart.add');
+
+Route::post('/cart/update/{id}', [App\Http\Controllers\CartController::class, 'update'])
+    ->name('cart.update');
+
+Route::delete('/cart/remove/{id}', [App\Http\Controllers\CartController::class, 'remove'])
+    ->name('cart.remove');
+
+
+/*
+|--------------------------------------------------------------------------
+| ADDRESS
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/alamat', [App\Http\Controllers\AddressController::class, 'index'])
+    ->name('alamat.index');
+
+Route::get('/alamat/create', [App\Http\Controllers\AddressController::class, 'create'])
+    ->name('alamat.create');
+
+Route::post('/alamat/store', [App\Http\Controllers\AddressController::class, 'store'])
+    ->name('alamat.store');
+
+Route::post('/alamat/select/{id}', [App\Http\Controllers\AddressController::class, 'select'])
+    ->name('alamat.select');
+
+    Route::delete('/alamat/{id}', [AddressController::class, 'destroy'])
+    ->name('alamat.destroy');

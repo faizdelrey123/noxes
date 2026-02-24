@@ -63,7 +63,7 @@
             <!-- Button -->
             <div style="display:flex; justify-content:space-between;">
 
-                <a href="{{ route('products.index') }}"
+                <a href="{{ route('admin.product.index') }}"
                    style="background:#e5e5e5;padding:10px 20px;border-radius:8px;text-decoration:none;color:black;">
                     Kembali
                 </a>

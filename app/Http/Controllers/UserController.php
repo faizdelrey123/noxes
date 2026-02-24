@@ -6,6 +6,6 @@ class UserController extends Controller
 {
     public function dashboard()
     {
-        return view('home'); // sesuaikan dengan nama file
+        return view('user.home'); // sesuaikan dengan nama file
     }
 }

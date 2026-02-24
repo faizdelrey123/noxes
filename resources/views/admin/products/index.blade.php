@@ -9,7 +9,7 @@
             Kelola Produk
         </h2>
 
-        <a href="{{ route('products.create') }}"
+        <a href="{{ route('admin.product.create') }}"
            style="background:#0f5f54;color:white;padding:10px 20px;border-radius:8px;text-decoration:none;">
             + Tambah Produk
         </a>
@@ -35,44 +35,60 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse($products as $product)
-                <tr style="border-bottom:1px solid #eee;">
-                    <td>
-                        <img src="{{ asset('products/'.$product->image) }}"
-                             width="60">
-                    </td>
-                    <td>{{ $product->name }}</td>
-                    <td>{{ $product->series }}</td>
-                    <td>Rp {{ number_format($product->price) }}</td>
-                    <td>{{ $product->stock }}</td>
-                    <td style="display:flex; gap:10px;">
+@forelse($products as $product)
+<tr style="border-bottom:1px solid #eee; vertical-align:middle;">
 
-                        <a href="{{ route('products.edit', $product->id) }}"
-                           style="background:#ffc107;color:black;padding:5px 12px;border-radius:6px;text-decoration:none;">
-                            Edit
-                        </a>
+    <!-- KOLOM GAMBAR -->
+    <td>
+        @if($product->image)
+            <img src="{{ asset('products/'.$product->image) }}"
+                 width="80"
+                 style="border-radius:8px;">
+        @else
+            <span style="color:#999;">No Image</span>
+        @endif
+    </td>
 
-                        <form action="{{ route('admin.product.destroy', $product->id) }}"
-                              method="POST"
-                              onsubmit="return confirm('Yakin hapus produk?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit"
-                                    style="background:#dc3545;color:white;padding:5px 12px;border:none;border-radius:6px;cursor:pointer;">
-                                Hapus
-                            </button>
-                        </form>
+    <!-- KOLOM NAMA -->
+    <td>{{ $product->name }}</td>
 
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="6" align="center" style="padding:20px;">
-                        Belum ada produk
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
+    <!-- KOLOM SERIES -->
+    <td>{{ $product->series }}</td>
+
+    <!-- KOLOM HARGA -->
+    <td>Rp {{ number_format($product->price,0,',','.') }}</td>
+
+    <!-- KOLOM STOK -->
+    <td>{{ $product->stock }}</td>
+
+    <!-- KOLOM AKSI -->
+    <td style="display:flex; gap:10px;">
+        <a href="{{ route('admin.product.edit', $product->id) }}"
+           style="background:#ffc107;color:black;padding:5px 12px;border-radius:6px;text-decoration:none;">
+            Edit
+        </a>
+
+        <form action="{{ route('admin.product.destroy', $product->id) }}"
+              method="POST"
+              onsubmit="return confirm('Yakin hapus produk?')">
+            @csrf
+            @method('DELETE')
+            <button type="submit"
+                    style="background:#dc3545;color:white;padding:5px 12px;border:none;border-radius:6px;cursor:pointer;">
+                Hapus
+            </button>
+        </form>
+    </td>
+
+</tr>
+@empty
+<tr>
+    <td colspan="6" align="center" style="padding:20px;">
+        Belum ada produk
+    </td>
+</tr>
+@endforelse
+</tbody>
         </table>
 
     </div>

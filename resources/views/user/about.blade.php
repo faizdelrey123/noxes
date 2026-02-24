@@ -22,7 +22,7 @@
 
     <div class="space-x-10 text-[#1E5C4F] font-medium text-lg">
         <a href="{{ route('home') }}">Home</a>
-        <a href="#">Product ▾</a>
+        <a href="{{ route('product.index') }}">Product</a>
         <a href="{{ route('about') }}">About Us</a>
         <a href="{{ route('contact') }}">Contact Us</a>
     </div>
@@ -30,11 +30,17 @@
     <div class="flex items-center space-x-6">
 
     <!-- ICON CART -->
-    <a href="#">
-        <img src="{{ asset('images/cart.png') }}"
-             alt="Cart"
-             class="w-8 h-8 object-contain hover:scale-110 transition">
-    </a>
+    <a href="{{ route('cart.index') }}" class="relative">
+    <img src="{{ asset('images/cart.png') }}"
+         alt="Cart"
+         class="w-8 h-8 object-contain hover:scale-110 transition">
+
+    @if(session('cart'))
+        <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+            {{ count(session('cart')) }}
+        </span>
+    @endif
+</a>
 
     <!-- ICON PROFILE -->
     @auth
@@ -68,11 +74,11 @@
 <!-- ================= SECTION 1 ================= -->
 <section class="px-24 py-24 grid grid-cols-2 gap-20 items-center">
 
-    <img src="{{ asset('images/about1.jpg') }}"
+    <img src="{{ asset('images/bannerjans7.jpg') }}"
          class="w-full rounded">
 
     <div>
-        <h3 class="text-3xl font-semibold mb-6">OUR PRODUCT</h3>
+        <h1 class="text-3xl font-semibold mb-6">OUR PRODUCT</h1>
 
         <p class="text-gray-700 leading-relaxed text-lg">
             Trust is hard earned, so for over 50 years JanSport has designed
@@ -89,7 +95,7 @@
 <section class="px-24 pb-24 grid grid-cols-2 gap-20 items-center">
 
     <div>
-        <h3 class="text-3xl font-semibold mb-6">STUFF WE CARE ABOUT</h3>
+        <h1 class="text-3xl font-semibold mb-6">STUFF WE CARE ABOUT</h1>
 
         <p class="text-gray-700 leading-relaxed text-lg">
             As global citizens, we're aware of the small but significantly
@@ -100,7 +106,7 @@
         </p>
     </div>
 
-    <img src="{{ asset('images/about2.jpg') }}"
+    <img src="{{ asset('images/aboutjans.jpg') }}"
          class="w-full rounded">
 
 </section>

@@ -43,7 +43,7 @@ class ProductController extends Controller
             'image' => $imageName
         ]);
 
-        return redirect()->route('products.index')
+        return redirect()->route('admin.product.index')
             ->with('success', 'Produk berhasil ditambahkan');
     }
 
@@ -51,7 +51,7 @@ class ProductController extends Controller
     public function edit($id)
     {
         $product = Product::findOrFail($id);
-        return view('admin.products.edit', compact('product'));
+        return view('admin.product.edit', compact('product'));
     }
 
     // UPDATE
@@ -75,20 +75,20 @@ class ProductController extends Controller
     public function userProducts()
     {
         $products = Product::all();
-        return view('products.index', compact('products'));
+        return view('user.products.index', compact('products'));
     }
 
     // DETAIL PRODUK
     public function show($id)
     {
         $product = Product::findOrFail($id);
-        return view('products.detail', compact('product'));
+        return view('user.products.detail', compact('product'));
     }
 
     // FILTER SERIES
     public function bySeries($series)
     {
         $products = Product::where('series', $series)->get();
-        return view('products.index', compact('products'));
+        return view('user.products.index', compact('products'));
     }
 }

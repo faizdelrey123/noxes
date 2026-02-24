@@ -103,6 +103,7 @@
                         border-radius:8px;
                         cursor:pointer;
                         font-weight:500;
+                        font-family: 'Poppins', sans-serif;
                     ">
                     Simpan
                 </button>

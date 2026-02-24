@@ -20,6 +20,10 @@
         <h4>Total Produk</h4>
         <p>34</p>
     </div>
+    <div class="card">
+        <h4>Total Pengguna</h4>
+        <p>1000</p>
+    </div>
     
 </div>
 

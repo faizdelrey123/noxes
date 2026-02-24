@@ -1,19 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Products - NOXÉS</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Tambah Alamat</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+<script src="https://cdn.tailwindcss.com"></script>
     <style>
         * {
             font-family: 'Poppins', sans-serif !important;
         }
     </style>
+    <meta charset="UTF-8">
+    <style>
+        
+        .container{
+            max-width:600px;
+            margin:auto;
+            background:white;
+            padding:30px;
+            border-radius:10px;
+        }
+        input, textarea{
+            width:100%;
+            padding:10px;
+            margin-bottom:15px;
+            border-radius:6px;
+            border:1px solid #ccc;
+        }
+        button{
+            background:#0f5f54;
+            color:white;
+            padding:10px 20px;
+            border:none;
+            border-radius:6px;
+        }
+    </style>
 </head>
-<body class="bg-gray-100">
-
-<!-- NAVBAR -->
+<body>
+    <!-- ================= NAVBAR ================= -->
 <nav class="bg-white px-16 py-6 flex justify-between items-center shadow-sm">
 
     <h1 class="text-4xl font-bold text-[#1E5C4F]">
@@ -29,7 +52,6 @@
 
     <div class="flex items-center space-x-6">
 
-    <!-- ICON CART -->
     <a href="{{ route('cart.index') }}" class="relative">
     <img src="{{ asset('images/cart.png') }}"
          alt="Cart"
@@ -61,38 +83,23 @@
 
 </nav>
 
-<!-- TITLE -->
-<section class="py-16 text-center">
-    <h2 class="text-3xl text-green-800 mb-12 font-bold">Our Products</h2>
 
-    <div class="grid grid-cols-4 gap-10 px-24">
-        @forelse($products as $product)
-            <div class="bg-white p-6 shadow rounded-xl hover:shadow-lg transition">
+<div class="container">
+    <h2>Tambah Alamat</h2>
 
-                <img src="{{ asset('products/' . $product->image) }}" width="200"
-                     class="mx-auto h-48 object-contain mb-4">
+    <form action="{{ route('alamat.store') }}" method="POST">
+        @csrf
 
-                <h3 class="text-lg font-semibold">
-                    {{ $product->name }}
-                </h3>
+        <input type="text" name="name" placeholder="Nama Penerima" required>
 
-                <p class="text-green-700 font-bold mt-2">
-                    Rp {{ number_format($product->price,0,',','.') }}
-                </p>
+        <input type="text" name="phone" placeholder="No HP" required>
 
-                <a href="{{ route('product.detail', $product->id) }}"
-                   class="mt-4 inline-block bg-green-700 text-white px-4 py-2 rounded hover:bg-green-800">
-                    Detail
-                </a>
+        <textarea name="address" placeholder="Alamat Lengkap" required></textarea>
 
-            </div>
-        @empty
-            <p class="col-span-4 text-gray-500">
-                Belum ada produk tersedia.
-            </p>
-        @endforelse
-    </div>
-</section>
+        <button type="submit">Simpan Alamat</button>
+    </form>
+
+</div>
 
 </body>
 </html>
