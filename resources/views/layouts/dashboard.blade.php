@@ -145,13 +145,15 @@
     <!-- SIDEBAR -->
     <div class="sidebar">
     <div class="logo">NOXÉS</div>
-    <div class="role">{{ ucfirst(Auth::user()->role) }}</div>
+    @auth
+    <p>{{ ucfirst(Auth::user()->role) }}</p>
+@endauth
 
     <div class="menu">
 
     <a href="#">Dashboard</a>
 
-    <a href="{{ route('admin.product.index') }}">Kelola Produk</a>
+    <a href="#">Kelola Produk</a>
 
     <a href="#">Status Pemesanan</a>
     <a href="#">Riwayat Pesanan</a>

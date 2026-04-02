@@ -6,10 +6,12 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\PetugasController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\OrderController;
 
 /*
 |--------------------------------------------------------------------------
-| PUBLIC ROUTES
+| PUBLIC
 |--------------------------------------------------------------------------
 */
 
@@ -17,11 +19,6 @@ use App\Http\Controllers\AddressController;
 Route::get('/', function () {
     return view('user.home');
 })->name('home');
-
-// PRODUCT
-Route::get('/product', function () {
-    return view('user.products.index');
-})->name('index');
 
 // ABOUT
 Route::get('/about', function () {
@@ -36,26 +33,23 @@ Route::get('/contact', function () {
 
 /*
 |--------------------------------------------------------------------------
-| USER PRODUCT VIEW (PUBLIC)
+| PRODUCT USER
 |--------------------------------------------------------------------------
 */
 
-// LIST PRODUK USER
 Route::get('/product', [ProductController::class, 'userProducts'])
     ->name('product.index');
 
-// DETAIL PRODUK
 Route::get('/product/{id}', [ProductController::class, 'show'])
     ->name('product.detail');
 
-// FILTER SERIES
 Route::get('/product/series/{series}', [ProductController::class, 'bySeries'])
     ->name('product.series');
 
 
 /*
 |--------------------------------------------------------------------------
-| USER LOGIN
+| AUTH USER
 |--------------------------------------------------------------------------
 */
 
@@ -67,7 +61,7 @@ Route::post('/login', [AuthController::class, 'loginUser']);
 
 /*
 |--------------------------------------------------------------------------
-| STAFF LOGIN (ADMIN & PETUGAS)
+| AUTH STAFF (PENTING: GET + POST)
 |--------------------------------------------------------------------------
 */
 
@@ -79,7 +73,7 @@ Route::post('/staff/login', [AuthController::class, 'loginStaff']);
 
 /*
 |--------------------------------------------------------------------------
-| REGISTER (USER ONLY)
+| REGISTER
 |--------------------------------------------------------------------------
 */
 
@@ -88,91 +82,6 @@ Route::get('/register', [AuthController::class, 'showRegister'])
 
 Route::post('/register', [AuthController::class, 'register']);
 
-
-/*
-|--------------------------------------------------------------------------
-| PROTECTED ROUTES (WAJIB LOGIN)
-|--------------------------------------------------------------------------
-*/
-
-Route::middleware('auth')->group(function () {
-
-    // LOGOUT
-    Route::post('/logout', [AuthController::class, 'logout'])
-        ->name('logout');
-
-    // =============================
-    // DASHBOARD
-    // =============================
-
-    // Dashboard User
-    Route::get('/user/dashboard', [UserController::class, 'dashboard'])
-        ->name('user.dashboard');
-
-    // Dashboard Staff
-    Route::get('/staff/dashboard', function () {
-        return view('staff.dashboard');
-    })->name('staff.dashboard');
-
-    // Profile
-    Route::get('/profile', function () {
-        return view('user.profile');
-    })->name('profile');
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | ADMIN & PETUGAS - KELOLA PRODUK
-    |--------------------------------------------------------------------------
-    */
-
-    Route::prefix('admin')->group(function () {
-
-        // LIST PRODUK (ADMIN)
-        Route::get('/product', [ProductController::class, 'index'])
-            ->name('admin.product.index');
-
-        // FORM TAMBAH
-        Route::get('/product/create', [ProductController::class, 'create'])
-            ->name('admin.product.create');
-
-        // SIMPAN
-        Route::post('/product', [ProductController::class, 'store'])
-            ->name('admin.product.store');
-
-        // FORM EDIT
-        Route::get('/product/{id}/edit', [ProductController::class, 'edit'])
-            ->name('admin.product.edit');
-
-        // UPDATE
-        Route::put('/product/{id}', [ProductController::class, 'update'])
-            ->name('admin.product.update');
-
-        // HAPUS
-        Route::delete('/product/{id}', [ProductController::class, 'destroy'])
-            ->name('admin.product.destroy');
-    });
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | KELOLA PETUGAS (ADMIN ONLY)
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/kelola-petugas', [PetugasController::class, 'index'])
-        ->name('petugas.index');
-
-    Route::get('/kelola-petugas/create', [PetugasController::class, 'create'])
-        ->name('petugas.create');
-
-    Route::post('/kelola-petugas', [PetugasController::class, 'store'])
-        ->name('petugas.store');
-
-    Route::delete('/kelola-petugas/{id}', [PetugasController::class, 'destroy'])
-        ->name('petugas.destroy');
-
-});
 
 /*
 |--------------------------------------------------------------------------
@@ -199,17 +108,157 @@ Route::delete('/cart/remove/{id}', [App\Http\Controllers\CartController::class, 
 |--------------------------------------------------------------------------
 */
 
-Route::get('/alamat', [App\Http\Controllers\AddressController::class, 'index'])
-    ->name('alamat.index');
+Route::get('/alamat', [AddressController::class, 'index'])->name('alamat.index');
+Route::get('/alamat/create', [AddressController::class, 'create'])->name('alamat.create');
+Route::post('/alamat/store', [AddressController::class, 'store'])->name('alamat.store');
+Route::post('/alamat/select/{id}', [AddressController::class, 'select'])->name('alamat.select');
+Route::delete('/alamat/{id}', [AddressController::class, 'destroy'])->name('alamat.destroy');
 
-Route::get('/alamat/create', [App\Http\Controllers\AddressController::class, 'create'])
-    ->name('alamat.create');
 
-Route::post('/alamat/store', [App\Http\Controllers\AddressController::class, 'store'])
-    ->name('alamat.store');
+/*
+|--------------------------------------------------------------------------
+| PROTECTED (LOGIN REQUIRED)
+|--------------------------------------------------------------------------
+*/
 
-Route::post('/alamat/select/{id}', [App\Http\Controllers\AddressController::class, 'select'])
-    ->name('alamat.select');
+Route::middleware('auth')->group(function () {
 
-    Route::delete('/alamat/{id}', [AddressController::class, 'destroy'])
-    ->name('alamat.destroy');
+    // LOGOUT
+    Route::post('/logout', [AuthController::class, 'logout'])
+        ->name('logout');
+
+    // DASHBOARD USER
+    Route::get('/user/dashboard', [UserController::class, 'dashboard'])
+        ->name('user.dashboard');
+
+    // PROFILE
+    Route::get('/profile', [UserController::class, 'profile'])
+        ->name('profile');
+
+    /*
+    |--------------------------------------------------------------------------
+    | CHECKOUT
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/checkout', [CheckoutController::class, 'index'])
+        ->name('checkout.index');
+
+    Route::post('/checkout', [CheckoutController::class, 'store'])
+        ->name('checkout.store');
+
+    /*
+    |--------------------------------------------------------------------------
+    | ORDER USER
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/orders', [OrderController::class, 'index'])
+        ->name('orders.index');
+
+    Route::get('/orders/{id}', [OrderController::class, 'show'])
+        ->name('orders.show');
+
+    Route::get('/orders/{id}/struk', [OrderController::class, 'struk'])
+        ->name('orders.struk');
+
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN / PETUGAS
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth'])->group(function () {
+
+    // DASHBOARD PETUGAS
+    Route::get('/staff/dashboard', [PetugasController::class, 'dashboard'])
+        ->name('staff.dashboard');
+
+    // STATUS PESANAN (SETELAH APPROVE)
+    Route::get('/staff/status', [PetugasController::class, 'statusPesanan'])
+        ->name('staff.status');
+
+    // APPROVE PESANAN (DARI DASHBOARD)
+    Route::post('/staff/approve/{id}', [PetugasController::class, 'approve'])
+        ->name('staff.approve');
+
+    // UPDATE STATUS (DIKEMAS → DIKIRIM → SELESAI)
+    Route::post('/orders/{id}/update-status', [OrderController::class, 'updateStatus'])
+        ->name('orders.updateStatus');
+
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN PRODUK
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('auth')->prefix('admin')->group(function () {
+
+    Route::get('/product', [ProductController::class, 'index'])
+        ->name('admin.product.index');
+
+    Route::get('/product/create', [ProductController::class, 'create'])
+        ->name('admin.product.create');
+
+    Route::post('/product', [ProductController::class, 'store'])
+        ->name('admin.product.store');
+
+    Route::get('/product/{id}/edit', [ProductController::class, 'edit'])
+        ->name('admin.product.edit');
+
+    Route::put('/product/{id}', [ProductController::class, 'update'])
+        ->name('admin.product.update');
+
+    Route::delete('/product/{id}', [ProductController::class, 'destroy'])
+        ->name('admin.product.destroy');
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| DEBUG
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/reset-cart', function () {
+    session()->forget('cart');
+    return "Cart direset!";
+});
+
+Route::get('/staff/riwayat', [PetugasController::class, 'riwayat'])
+    ->name('staff.riwayat');
+
+Route::middleware(['auth'])->group(function () {
+
+    Route::get('/staff/product', [ProductController::class, 'index'])
+        ->name('staff.product.index');
+
+    Route::get('/staff/product/create', [ProductController::class, 'create'])
+        ->name('staff.product.create');
+
+    Route::post('/staff/product', [ProductController::class, 'store'])
+        ->name('staff.product.store');
+
+    Route::get('/staff/product/{id}/edit', [ProductController::class, 'edit'])
+        ->name('staff.product.edit');
+
+    Route::put('/staff/product/{id}', [ProductController::class, 'update'])
+        ->name('staff.product.update');
+
+    Route::delete('/staff/product/{id}', [ProductController::class, 'destroy'])
+        ->name('staff.product.destroy');
+});
+
+Route::middleware(['auth','role:admin'])->prefix('admin')->group(function () {
+
+    Route::get('/dashboard', function () {
+        return view('admin.dashboard');
+    })->name('admin.dashboard');
+
+});

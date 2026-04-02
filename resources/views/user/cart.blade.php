@@ -61,11 +61,13 @@
             </a>
         </div>
     @else
-        <div class="border p-10 rounded-xl mb-14 bg-white">
-            <p class="font-semibold text-lg">{{ $selectedAddress->name }}</p>
-            <p>{{ $selectedAddress->phone }}</p>
-            <p>{{ $selectedAddress->address }}</p>
-            <a href="{{ route('alamat.index') }}" class="text-sm underline">
+        <div class="border p-10 rounded-xl flex justify-between items-center mb-14 bg-white">
+            <div>
+            <p class="text-2xl font-semibold">{{ $selectedAddress->name }}</p>
+            <p class="text-xl font-medium">{{ $selectedAddress->phone }}</p>
+            <p class="text-xl font-medium">{{ $selectedAddress->address }}</p>
+            </div>
+            <a href="{{ route('alamat.index') }}" class="text-lg font-medium">
                 Ganti alamat
             </a>
         </div>
@@ -143,15 +145,36 @@
         </a>
     </div>
 </div>
-
+<!-- POPUP PRODUK KOSONG -->
+<div id="popupProduk" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
+    <div class="bg-white p-10 rounded-2xl text-center w-96">
+        <p class="mb-6 text-lg">
+            Ups, keranjang kamu kosong 😢 <br>
+            yuk pilih produk dulu !!
+        </p>
+        <a href="{{ route('product.index') }}"
+           class="bg-[#1E5C4F] text-white px-6 py-3 rounded-lg">
+            Belanja sekarang
+        </a>
+    </div>
+</div>
 
 <script>
 function checkout(){
+
+    let cartEmpty = {{ count($cart) == 0 ? 'true' : 'false' }};
+
+    if(cartEmpty){
+        document.getElementById('popupProduk').classList.remove('hidden');
+        document.getElementById('popupProduk').classList.add('flex');
+        return;
+    }
+
     @if(!$selectedAddress)
         document.getElementById('popup').classList.remove('hidden');
         document.getElementById('popup').classList.add('flex');
     @else
-        alert("Checkout berhasil!");
+        window.location.href = "{{ route('checkout.index') }}";
     @endif
 }
 </script>

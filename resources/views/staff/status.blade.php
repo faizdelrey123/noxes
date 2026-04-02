@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Dashboard Petugas</title>
+    <title>Status Pemesanan</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
@@ -19,7 +19,7 @@
         /* SIDEBAR */
         .sidebar {
             width: 240px;
-            background: white;
+            background: #fff;
             min-height: 100vh;
             padding: 20px;
             border-right: 1px solid #ddd;
@@ -31,6 +31,11 @@
             color: #0f5f54;
         }
 
+        .role {
+            margin-top: 5px;
+            color: #0f5f54;
+        }
+
         .menu {
             margin-top: 30px;
         }
@@ -38,7 +43,7 @@
         .menu a {
             display: block;
             padding: 10px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             color: #0f5f54;
             text-decoration: none;
             border-radius: 6px;
@@ -57,8 +62,8 @@
         .logout button {
             background: #0f5f54;
             color: white;
-            padding: 10px 25px;
             border: none;
+            padding: 10px 25px;
             border-radius: 8px;
             cursor: pointer;
         }
@@ -72,8 +77,8 @@
             background: white;
             padding: 20px;
             border-bottom: 1px solid #ddd;
-            font-size: 22px;
-            font-weight: bold;
+            font-size: 20px;
+            font-weight: 600;
             color: #0f5f54;
         }
 
@@ -81,72 +86,40 @@
             padding: 40px;
         }
 
-        .cards {
-            display: flex;
-            gap: 20px;
-            margin-top: 30px;
-            flex-wrap: wrap;
-        }
-
-        .card {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            border: 1px solid #ddd;
-            width: 220px;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.05);
-        }
-
-        .card h4 {
-            margin: 0;
-            font-weight: 500;
-            color: #555;
-        }
-
-        .card p {
-            font-size: 22px;
-            font-weight: bold;
-            margin-top: 10px;
-            color: #0f5f54;
-        }
-
-        /* TABLE */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 30px;
             background: white;
             border-radius: 10px;
             overflow: hidden;
         }
 
         th, td {
-            padding: 12px;
+            padding: 15px;
             text-align: center;
             border-bottom: 1px solid #eee;
         }
 
         th {
-            background: #f5f5f5;
+            background: #f2f2f2;
         }
 
-        .btn-approve {
-            background:#0f5f54;
-            color:white;
-            padding:6px 12px;
-            border:none;
-            border-radius:6px;
-            cursor:pointer;
-        }
-
-        .btn-approve:hover {
-            background:#0c4b42;
-        }
-
-        .proof-img {
-            width: 60px;
+        select {
+            padding: 5px 10px;
             border-radius: 6px;
         }
+
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            color: white;
+            font-size: 13px;
+        }
+
+        .dikemas { background: orange; }
+        .dikirim { background: #3490dc; }
+        .selesai { background: #38a169; }
 
     </style>
 </head>
@@ -158,8 +131,7 @@
     <!-- SIDEBAR -->
     <div class="sidebar">
         <div class="logo">NOXÉS</div>
-
-        <p>{{ Auth::check() ? ucfirst(Auth::user()->role) : '' }}</p>
+        <div class="role">{{ ucfirst(Auth::user()->role) }}</div>
 
         <div class="menu">
             <a href="{{ route('staff.dashboard') }}" class="active">Dashboard</a>
@@ -167,7 +139,7 @@
             <a href="{{ route('staff.status') }}">Status Pemesanan</a>
             <a href="{{ route('staff.riwayat') }}">Riwayat Pesanan</a>
 
-            @if(Auth::check() && Auth::user()->role == 'petugas')
+            @if(Auth::user()->role == 'petugas')
                 <a href="#">Laporan</a>
             @endif
         </div>
@@ -184,35 +156,12 @@
     <div class="content">
 
         <div class="navbar">
-            Dashboard
+            Status Pemesanan
         </div>
 
         <div class="main">
 
-            <h2>Selamat Datang {{ Auth::user()->name ?? '' }} 👋</h2>
-
-            <!-- CARDS -->
-            <div class="cards">
-
-                <div class="card">
-                    <h4>Total Pendapatan</h4>
-                    <p>Rp {{ number_format($totalPendapatan ?? 0,0,',','.') }}</p>
-                </div>
-
-                <div class="card">
-                    <h4>Total Order</h4>
-                    <p>{{ $totalOrder ?? 0 }}</p>
-                </div>
-
-                <div class="card">
-                    <h4>Total Produk</h4>
-                    <p>{{ $totalProduk ?? 0 }}</p>
-                </div>
-
-            </div>
-
-            <!-- TABEL APPROVE -->
-            <h3 style="margin-top:40px;">Konfirmasi Pesanan</h3>
+            <h2>Daftar Pesanan</h2>
 
             @if(session('success'))
                 <p style="color:green">{{ session('success') }}</p>
@@ -223,45 +172,60 @@
                     <tr>
                         <th>ID Pesanan</th>
                         <th>Nama User</th>
+                        <th>Jumlah Item</th>
                         <th>Total</th>
-                        <th>Bukti</th>
-                        <th>Aksi</th>
+                        <th>Status</th>
+                        <th>Ubah Status</th>
                     </tr>
                 </thead>
 
                 <tbody>
-                    @forelse($pendingOrders as $order)
+                    @foreach($orders as $order)
                     <tr>
+
                         <td>{{ $order->order_code }}</td>
+
                         <td>{{ $order->user->name }}</td>
-                        <td>Rp {{ number_format($order->total,0,',','.') }}</td>
+
+                        <td>{{ $order->items->sum('quantity') }}</td>
 
                         <td>
-                            @if($order->proof)
-                                <a href="{{ asset('storage/'.$order->proof) }}" target="_blank">
-                                    <img src="{{ asset('products/'.$order->proof) }}" class="proof-img">
-                                </a>
-                            @else
-                                -
-                            @endif
+                            Rp {{ number_format($order->total,0,',','.') }}
                         </td>
 
                         <td>
-                            <form action="{{ route('staff.approve', $order->id) }}" method="POST">
+                            <span class="badge {{ $order->status }}">
+                                {{ ucfirst($order->status) }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <form action="{{ route('orders.updateStatus', $order->id) }}" method="POST">
                                 @csrf
-                                <button class="btn-approve"
-                                    onclick="return confirm('Approve pesanan ini?')">
-                                    Approve
-                                </button>
+
+                                <select name="status" onchange="this.form.submit()">
+
+                                    <option value="dikemas" {{ $order->status == 'dikemas' ? 'selected' : '' }}>
+                                        Dikemas
+                                    </option>
+
+                                    <option value="dikirim" {{ $order->status == 'dikirim' ? 'selected' : '' }}>
+                                        Dikirim
+                                    </option>
+
+                                    <option value="selesai" {{ $order->status == 'selesai' ? 'selected' : '' }}>
+                                        Selesai
+                                    </option>
+
+                                </select>
+
                             </form>
                         </td>
+
                     </tr>
-                    @empty
-                    <tr>
-                        <td colspan="5">Tidak ada pesanan tertunda</td>
-                    </tr>
-                    @endforelse
+                    @endforeach
                 </tbody>
+
             </table>
 
         </div>

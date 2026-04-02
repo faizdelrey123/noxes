@@ -32,13 +32,13 @@ class AddressController extends Controller
     }
 
     public function select($id)
-    {
-        $address = Address::findOrFail($id);
-        session()->put('selected_address', $address);
+{
+    $address = Address::findOrFail($id);
 
-        return redirect()->route('cart.index');
-    }
+    session()->put('selected_address', $address->id); // FIX
 
+    return redirect()->route('cart.index');
+}
     public function destroy($id)
     {
         $address = Address::findOrFail($id);

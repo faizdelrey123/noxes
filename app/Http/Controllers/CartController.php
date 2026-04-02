@@ -4,16 +4,24 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\Address;
 
 class CartController extends Controller
 {
     public function index()
-    {
-        $cart = session()->get('cart', []);
-        $selectedAddress = session()->get('selected_address');
+{
+    $cart = session('cart', []);
 
-        return view('user.cart', compact('cart', 'selectedAddress'));
+    $selectedAddressId = session('selected_address');
+
+    $selectedAddress = null;
+
+    if ($selectedAddressId) {
+        $selectedAddress = Address::find($selectedAddressId);
     }
+
+    return view('user.cart', compact('cart', 'selectedAddress'));
+}
 
     public function add($id)
     {
@@ -25,12 +33,12 @@ class CartController extends Controller
             $cart[$id]['quantity']++;
         } else {
             $cart[$id] = [
-                "name" => $product->name,
-                "price" => $product->price,
-                "image" => $product->image,
-                "series" => $product->series,
-                "quantity" => 1
-            ];
+    'id' => $product->id, // WAJIB TAMBAH INI
+    'name' => $product->name,
+    'price' => $product->price,
+    'image' => $product->image,
+    'quantity' => 1
+];
         }
 
         session()->put('cart', $cart);

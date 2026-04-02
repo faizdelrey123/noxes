@@ -2,41 +2,24 @@
 <html>
 <head>
     <title>Tambah Alamat</title>
+    <meta charset="UTF-8">
+
+    <!-- FONT -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- TAILWIND -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
     <style>
         * {
-            font-family: 'Poppins', sans-serif !important;
-        }
-    </style>
-    <meta charset="UTF-8">
-    <style>
-        
-        .container{
-            max-width:600px;
-            margin:auto;
-            background:white;
-            padding:30px;
-            border-radius:10px;
-        }
-        input, textarea{
-            width:100%;
-            padding:10px;
-            margin-bottom:15px;
-            border-radius:6px;
-            border:1px solid #ccc;
-        }
-        button{
-            background:#0f5f54;
-            color:white;
-            padding:10px 20px;
-            border:none;
-            border-radius:6px;
+            font-family: 'Poppins', sans-serif;
         }
     </style>
 </head>
-<body>
-    <!-- ================= NAVBAR ================= -->
+
+<body class="bg-[#F5F5F5]">
+
+<!-- ================= NAVBAR ================= -->
 <nav class="bg-white px-16 py-6 flex justify-between items-center shadow-sm">
 
     <h1 class="text-4xl font-bold text-[#1E5C4F]">
@@ -52,52 +35,77 @@
 
     <div class="flex items-center space-x-6">
 
-    <a href="{{ route('cart.index') }}" class="relative">
-    <img src="{{ asset('images/cart.png') }}"
-         alt="Cart"
-         class="w-8 h-8 object-contain hover:scale-110 transition">
+        <!-- CART -->
+        <a href="{{ route('cart.index') }}" class="relative">
+            <img src="{{ asset('images/cart.png') }}"
+                 class="w-8 hover:scale-110 transition">
 
-    @if(session('cart'))
-        <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
-            {{ count(session('cart')) }}
-        </span>
-    @endif
-</a>
+            @if(session('cart'))
+            <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                {{ count(session('cart')) }}
+            </span>
+            @endif
+        </a>
 
-    <!-- ICON PROFILE -->
-    @auth
+        <!-- PROFILE -->
+        @auth
         <a href="{{ route('profile') }}">
             <img src="{{ asset('images/profile.png') }}"
-                 alt="Profile"
-                 class="w-9 h-9 rounded-full object-cover border border-gray-300 hover:scale-110 transition">
+                 class="w-9 h-9 rounded-full border hover:scale-110 transition">
         </a>
-    @else
+        @else
         <a href="{{ route('login') }}">
             <img src="{{ asset('images/profile.png') }}"
-                 alt="Login"
-                 class="w-9 h-9 rounded-full object-cover border border-gray-300 hover:scale-110 transition">
+                 class="w-9 h-9 rounded-full border hover:scale-110 transition">
         </a>
-    @endauth
+        @endauth
 
-</div>
-
+    </div>
 </nav>
 
 
-<div class="container">
-    <h2>Tambah Alamat</h2>
+<!-- ================= CONTENT ================= -->
+<div class="flex justify-center mt-20">
 
-    <form action="{{ route('alamat.store') }}" method="POST">
-        @csrf
+    <div class="bg-white w-[500px] p-10 rounded-2xl shadow-sm">
 
-        <input type="text" name="name" placeholder="Nama Penerima" required>
+        <h2 class="text-2xl font-semibold text-[#1E5C4F] mb-8 text-center">
+            Tambah Alamat
+        </h2>
 
-        <input type="text" name="phone" placeholder="No HP" required>
+        <form action="{{ route('alamat.store') }}" method="POST" class="space-y-5">
+            @csrf
 
-        <textarea name="address" placeholder="Alamat Lengkap" required></textarea>
+            <!-- NAMA -->
+            <div>
+                <label class="text-sm text-gray-600">Nama Penerima</label>
+                <input type="text" name="name" required
+                    class="w-full mt-1 border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1E5C4F]">
+            </div>
 
-        <button type="submit">Simpan Alamat</button>
-    </form>
+            <!-- HP -->
+            <div>
+                <label class="text-sm text-gray-600">No HP</label>
+                <input type="text" name="phone" required
+                    class="w-full mt-1 border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1E5C4F]">
+            </div>
+
+            <!-- ALAMAT -->
+            <div>
+                <label class="text-sm text-gray-600">Alamat Lengkap</label>
+                <textarea name="address" rows="4" required
+                    class="w-full mt-1 border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1E5C4F]"></textarea>
+            </div>
+
+            <!-- BUTTON -->
+            <button type="submit"
+                class="w-full bg-[#1E5C4F] text-white py-3 rounded-xl font-semibold hover:opacity-90 transition">
+                Simpan Alamat
+            </button>
+
+        </form>
+
+    </div>
 
 </div>
 

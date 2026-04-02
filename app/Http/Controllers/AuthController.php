@@ -78,10 +78,13 @@ class AuthController extends Controller
 
             $role = Auth::user()->role;
 
-            if ($role === 'admin' || $role === 'petugas') {
-                return redirect()->route('staff.dashboard');
-            }
+            if (auth()->user()->role == 'admin') {
+    return redirect('/admin/dashboard');
+}
 
+if (auth()->user()->role == 'petugas') {
+    return redirect()->route('staff.dashboard');
+}
             Auth::logout();
             return back()->with('error', 'Bukan akun staff.');
         }
