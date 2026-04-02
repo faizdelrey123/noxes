@@ -8,6 +8,25 @@ use App\Models\Order;
 
 class OrderController extends Controller
 {
+    public function index(Request $request)
+    {
+        $query = Order::with('items.product')->where('user_id', Auth::id());
+
+        // FILTER TANGGAL
+        if ($request->date) {
+            $query->whereDate('created_at', $request->date);
+        }
+
+        // FILTER BULAN
+        if ($request->month) {
+            $query->whereMonth('created_at', $request->month);
+        }
+
+        $orders = $query->latest()->get();
+
+        return view('user.orders', compact('orders'));
+    }
+
     public function profile(Request $request)
 {
     $status = $request->status ?? 'tertunda';

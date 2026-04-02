@@ -41,7 +41,7 @@ class PetugasController extends Controller
             'role' => 'petugas'
         ]);
 
-        return redirect()->route('petugas.index')
+        return redirect()->route('admin.petugas.index')
             ->with('success', 'Petugas berhasil dibuat');
     }
 
@@ -74,6 +74,26 @@ class PetugasController extends Controller
             'totalOrder',
             'totalProduk',
             'pendingOrders'
+        ));
+    }
+
+    public function adminDashboard()
+    {
+        // 🔥 HITUNG DATA
+        $totalPendapatan = Order::where('status', 'selesai')->sum('total');
+        $totalOrder = Order::count();
+        $totalProduk = Product::count();
+        $totalUser = User::where('role', 'user')->count();
+
+        // 🔥 ORDER TERBARU
+        $orders = Order::with('user')->latest()->take(5)->get();
+
+        return view('admin.dashboard', compact(
+            'totalPendapatan',
+            'totalOrder',
+            'totalProduk',
+            'totalUser',
+            'orders'
         ));
     }
 
@@ -132,4 +152,94 @@ class PetugasController extends Controller
 
     return view('staff.riwayat', compact('orders','filter'));
 }
+
+    /*
+    |----------------------------------------
+    | KELOLA PENGGUNA (ROLE: USER)
+    |----------------------------------------
+    */
+    public function userIndex()
+    {
+        $users = User::where('role', 'user')->get();
+        return view('admin.user.index', compact('users'));
+    }
+
+    public function userShow($id)
+    {
+        $user = User::withCount('orders')->findOrFail($id);
+        return view('admin.user.show', compact('user'));
+    }
+
+    public function userDestroy($id)
+    {
+        User::findOrFail($id)->delete();
+        return back()->with('success', 'Pengguna berhasil dihapus');
+    }
+
+    public function showOrder($id)
+    {
+        $order = Order::with('items.product', 'address', 'user')
+            ->findOrFail($id);
+
+        $subtotal = collect($order->items)->sum(function($item){
+            return $item->price * $item->quantity;
+        });
+
+        $ongkir = 10000;
+
+        return view('staff.order_detail', compact('order', 'subtotal', 'ongkir'));
+    }
+
+    public function laporan(Request $request)
+    {
+        $query = Order::with('user', 'items')->where('status', 'selesai');
+
+        if ($request->start_date && $request->end_date) {
+            $query->whereBetween('created_at', [$request->start_date . ' 00:00:00', $request->end_date . ' 23:59:59']);
+        }
+
+        $orders = $query->latest()->get();
+        $total_pendapatan = $orders->sum('total');
+        $total_order = $orders->count();
+
+        return view('staff.laporan', compact('orders', 'total_pendapatan', 'total_order'));
+    }
+
+    public function exportExcel(Request $request)
+    {
+        $query = Order::with('user')->where('status', 'selesai');
+
+        if ($request->start_date && $request->end_date) {
+            $query->whereBetween('created_at', [$request->start_date . ' 00:00:00', $request->end_date . ' 23:59:59']);
+        }
+
+        $orders = $query->latest()->get();
+        
+        $filename = "Laporan_Penjualan_" . date('Y-m-d') . ".csv";
+        $headers = array(
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        );
+
+        $callback = function() use ($orders) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, array('ID Order', 'Customer', 'Tanggal', 'Items', 'Total'));
+
+            foreach ($orders as $order) {
+                fputcsv($file, array(
+                    $order->order_code,
+                    $user_name = $order->user ? $order->user->name : 'N/A',
+                    $order->created_at->format('d/m/Y'),
+                    $order->items->count(),
+                    $order->total
+                ));
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
 }

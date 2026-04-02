@@ -151,20 +151,20 @@
 
     <div class="menu">
 
-    <a href="#">Dashboard</a>
+    <a href="{{ Auth::user()->role == 'admin' ? route('admin.dashboard') : route('staff.dashboard') }}">Dashboard</a>
 
-    <a href="#">Kelola Produk</a>
+    <a href="{{ Auth::user()->role == 'admin' ? route('admin.product.index') : route('staff.product.index') }}">Kelola Produk</a>
 
-    <a href="#">Status Pemesanan</a>
-    <a href="#">Riwayat Pesanan</a>
+    <a href="{{ route('staff.status') }}">Status Pemesanan</a>
+    <a href="{{ route('staff.riwayat') }}">Riwayat Pesanan</a>
 
     @if(Auth::user()->role == 'petugas')
         <a href="#">Laporan</a>
     @endif
 
     @if(Auth::user()->role == 'admin')
-        <a href="{{ route('petugas.index') }}">Kelola Petugas</a>
-        <a href="#">Kelola Pengguna</a>
+        <a href="{{ route('admin.petugas.index') }}">Kelola Petugas</a>
+        <a href="{{ route('admin.user.index') }}">Kelola Pengguna</a>
     @endif
 
 </div>

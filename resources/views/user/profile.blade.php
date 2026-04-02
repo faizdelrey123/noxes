@@ -105,7 +105,7 @@ function closePopup(){
             Pesanan Saya
         </h3>
 
-        <a href="#" class="bg-[#1E5C4F] text-white px-6 py-2 rounded-lg">
+        <a href="{{ route('orders.index') }}" class="bg-[#1E5C4F] text-white px-6 py-2 rounded-lg">
             Riwayat Pesanan
         </a>
 

@@ -23,6 +23,7 @@
             min-height: 100vh;
             padding: 20px;
             border-right: 1px solid #ddd;
+            position: relative;
         }
 
         .logo {
@@ -51,15 +52,18 @@
         .logout {
             position: absolute;
             bottom: 30px;
+            left: 20px;
+            right: 20px;
         }
-
         .logout button {
+            width: 100%;
             background: #0f5f54;
             color: white;
-            padding: 10px 25px;
+            padding: 12px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
+            font-weight: 500;
         }
 
         /* CONTENT */
@@ -142,39 +146,23 @@
 
 <div class="container">
 
-    <<!-- SIDEBAR ADMIN -->
 <div class="sidebar">
     <div class="logo">NOXÉS</div>
-    <p>Admin</p>
+    <p>{{ Auth::check() ? ucfirst(Auth::user()->role) : '' }}</p>
 
     <div class="menu">
-        <a href="{{ route('admin.dashboard') }}">Dashboard</a>
-
-        <a href="{{ route('admin.product.index') }}">
-            Kelola Produk
-        </a>
-
-        <a href="{{ route('staff.status') }}">
-            Status Pemesanan
-        </a>
-
-        <a href="{{ route('staff.riwayat') }}">
-            Riwayat Pesanan
-        </a>
-
-        <a href="{{ route('admin.petugas.index') }}">
-            Kelola Petugas
-        </a>
-
-        <a href="#">
-            Kelola Pengguna
-        </a>
+        <a href="{{ route('admin.dashboard') }}" class="active">Dashboard</a>
+        <a href="{{ route('admin.product.index') }}">Kelola Produk</a>
+        <a href="{{ route('staff.status') }}">Status Pemesanan</a>
+        <a href="{{ route('staff.riwayat') }}">Riwayat Pesanan</a>
+        <a href="{{ route('admin.petugas.index') }}">Kelola Petugas</a>
+        <a href="{{ route('admin.user.index') }}">Kelola Pengguna</a>
     </div>
 
     <div class="logout">
         <form method="POST" action="{{ route('logout') }}">
             @csrf
-            <button>Logout</button>
+            <button type="submit">Logout</button>
         </form>
     </div>
 </div>

@@ -12,6 +12,7 @@
         .sidebar {
             width:240px; background:white; min-height:100vh;
             padding:20px; border-right:1px solid #ddd;
+            position: relative;
         }
 
         .logo { font-size:26px; font-weight:bold; color:#0f5f54; }
@@ -49,20 +50,32 @@
     <!-- SIDEBAR -->
     <div class="sidebar">
         <div class="logo">NOXÉS</div>
-        <p>{{ ucfirst(Auth::user()->role) }}</p>
+        <p>{{ Auth::check() ? ucfirst(Auth::user()->role) : '' }}</p>
 
         <div class="menu">
-            <a href="{{ route('staff.dashboard') }}">Dashboard</a>
-            <a href="{{ route('staff.product.index') }}">Kelola Produk</a>
+            <a href="{{ Auth::user()->role == 'admin' ? route('admin.dashboard') : route('staff.dashboard') }}">Dashboard</a>
+            <a href="{{ Auth::user()->role == 'admin' ? route('admin.product.index') : route('staff.product.index') }}" class="active">Kelola Produk</a>
             <a href="{{ route('staff.status') }}">Status Pemesanan</a>
+            <a href="{{ route('staff.riwayat') }}">Riwayat Pesanan</a>
+            
+            @if(Auth::user()->role == 'admin')
+                <a href="{{ route('admin.petugas.index') }}">Kelola Petugas</a>
+                <a href="{{ route('admin.user.index') }}">Kelola Pengguna</a>
+            @endif
+
+            @if(Auth::user()->role == 'petugas')
+                <a href="{{ route('staff.laporan') }}">Laporan</a>
+            @endif
         </div>
 
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button style="margin-top:20px;background:#0f5f54;color:white;padding:10px;border:none;border-radius:8px;">
-                Logout
-            </button>
-        </form>
+        <div class="logout" style="position:absolute; bottom:30px; left:20px; right:20px;">
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" style="width:100%; background:#0f5f54; color:white; padding:12px; border:none; border-radius:8px; cursor:pointer; font-weight:500; font-family:'Poppins',sans-serif;">
+                    Logout
+                </button>
+            </form>
+        </div>
     </div>
 
     <!-- CONTENT -->

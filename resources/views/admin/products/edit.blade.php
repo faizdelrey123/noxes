@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Tambah Produk - Petugas</title>
+    <title>Edit Produk - Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * { font-family: 'Poppins', sans-serif; box-sizing: border-box; }
@@ -104,6 +104,15 @@
             margin-bottom: 20px;
         }
         .back-link:hover { color: #0f5f54; }
+
+        .current-img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #eee;
+        }
     </style>
 </head>
 <body>
@@ -124,7 +133,7 @@
             @endif
 
             @if(Auth::user()->role == 'petugas')
-                <a href="{{ route('staff.laporan') }}">Laporan</a>
+                <a href="#">Laporan</a>
             @endif
         </div>
         <div class="logout">
@@ -137,28 +146,29 @@
 
     <div class="content">
         <div class="navbar">
-            <h2>Tambah Produk Baru</h2>
-            <span>{{ Auth::user()->name }}</span>
+            <h2>Edit Produk</h2>
+            <span>{{ Auth::user()->name }} (Admin)</span>
         </div>
 
         <div class="main">
-            <a href="{{ route('staff.product.index') }}" class="back-link">← Kembali ke Daftar</a>
+            <a href="{{ route('admin.product.index') }}" class="back-link">← Kembali ke Daftar</a>
 
             <div class="form-card">
-                <form action="{{ route('staff.product.store') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('admin.product.update', $product->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
+                    @method('PUT')
                     
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
                                 <label>Nama Produk</label>
-                                <input type="text" name="name" class="form-control" placeholder="Contoh: Noxes Prime Black" required>
+                                <input type="text" name="name" class="form-control" value="{{ $product->name }}" required>
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-group">
                                 <label>Series / Kategori</label>
-                                <input type="text" name="series" class="form-control" placeholder="Contoh: Prime Series" required>
+                                <input type="text" name="series" class="form-control" value="{{ $product->series }}" required>
                             </div>
                         </div>
                     </div>
@@ -167,29 +177,32 @@
                         <div class="col">
                             <div class="form-group">
                                 <label>Harga (Rp)</label>
-                                <input type="number" name="price" class="form-control" placeholder="Contoh: 150000" required>
+                                <input type="number" name="price" class="form-control" value="{{ $product->price }}" required>
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-group">
-                                <label>Stok Awal</label>
-                                <input type="number" name="stock" class="form-control" placeholder="0" required>
+                                <label>Stok</label>
+                                <input type="number" name="stock" class="form-control" value="{{ $product->stock }}" required>
                             </div>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label>Deskripsi Produk</label>
-                        <textarea name="description" class="form-control" placeholder="Tuliskan detail produk di sini..."></textarea>
+                        <textarea name="description" class="form-control">{{ $product->description }}</textarea>
                     </div>
 
                     <div class="form-group">
                         <label>Gambar Produk</label>
-                        <input type="file" name="image" class="form-control" required style="padding: 10px;">
-                        <small style="color: #888; display: block; margin-top: 5px;">Format disarankan: JPG, PNG, JPEG. Maks: 2MB.</small>
+                        @if($product->image)
+                            <img src="{{ asset('products/'.$product->image) }}" class="current-img">
+                        @endif
+                        <input type="file" name="image" class="form-control" style="padding: 10px;">
+                        <small style="color: #888; display: block; margin-top: 5px;">Biarkan kosong jika tidak ingin mengubah gambar. Format: JPG, PNG. Maks: 2MB.</small>
                     </div>
 
-                    <button type="submit" class="btn-submit">Simpan Produk</button>
+                    <button type="submit" class="btn-submit">Update Produk</button>
                 </form>
             </div>
         </div>

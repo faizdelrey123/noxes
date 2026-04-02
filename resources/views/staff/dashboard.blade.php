@@ -23,6 +23,7 @@
             min-height: 100vh;
             padding: 20px;
             border-right: 1px solid #ddd;
+            position: relative;
         }
 
         .logo {
@@ -52,15 +53,19 @@
         .logout {
             position: absolute;
             bottom: 30px;
+            left: 20px;
+            right: 20px;
         }
 
         .logout button {
+            width: 100%;
             background: #0f5f54;
             color: white;
-            padding: 10px 25px;
+            padding: 12px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
+            font-weight: 500;
         }
 
         /* CONTENT */
@@ -158,24 +163,28 @@
     <!-- SIDEBAR -->
     <div class="sidebar">
         <div class="logo">NOXÉS</div>
-
         <p>{{ Auth::check() ? ucfirst(Auth::user()->role) : '' }}</p>
 
         <div class="menu">
-            <a href="{{ route('staff.dashboard') }}" class="active">Dashboard</a>
-            <a href="{{ route('staff.product.index') }}">Kelola Produk</a>
+            <a href="{{ Auth::user()->role == 'admin' ? route('admin.dashboard') : route('staff.dashboard') }}" class="active">Dashboard</a>
+            <a href="{{ Auth::user()->role == 'admin' ? route('admin.product.index') : route('staff.product.index') }}">Kelola Produk</a>
             <a href="{{ route('staff.status') }}">Status Pemesanan</a>
             <a href="{{ route('staff.riwayat') }}">Riwayat Pesanan</a>
+            
+            @if(Auth::user()->role == 'admin')
+                <a href="{{ route('admin.petugas.index') }}">Kelola Petugas</a>
+                <a href="{{ route('admin.user.index') }}">Kelola Pengguna</a>
+            @endif
 
-            @if(Auth::check() && Auth::user()->role == 'petugas')
-                <a href="#">Laporan</a>
+            @if(Auth::user()->role == 'petugas')
+                <a href="{{ route('staff.laporan') }}">Laporan</a>
             @endif
         </div>
 
         <div class="logout">
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button>Logout</button>
+                <button type="submit">Logout</button>
             </form>
         </div>
     </div>

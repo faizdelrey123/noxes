@@ -185,6 +185,16 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/staff/approve/{id}', [PetugasController::class, 'approve'])
         ->name('staff.approve');
 
+    // DETAIL PESANAN STAFF
+    Route::get('/staff/orders/{id}', [PetugasController::class, 'showOrder'])
+        ->name('staff.orders.show');
+
+    // LAPORAN STAFF
+    Route::get('/staff/laporan', [PetugasController::class, 'laporan'])
+        ->name('staff.laporan');
+    Route::get('/staff/laporan/export', [PetugasController::class, 'exportExcel'])
+        ->name('staff.laporan.export');
+
     // UPDATE STATUS (DIKEMAS → DIKIRIM → SELESAI)
     Route::post('/orders/{id}/update-status', [OrderController::class, 'updateStatus'])
         ->name('orders.updateStatus');
@@ -255,10 +265,19 @@ Route::middleware(['auth'])->group(function () {
         ->name('staff.product.destroy');
 });
 
-Route::middleware(['auth','role:admin'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
 
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
+    Route::get('/dashboard', [PetugasController::class, 'adminDashboard'])->name('admin.dashboard');
+
+    // KELOLA PETUGAS
+    Route::get('/petugas', [PetugasController::class, 'index'])->name('admin.petugas.index');
+    Route::get('/petugas/create', [PetugasController::class, 'create'])->name('admin.petugas.create');
+    Route::post('/petugas', [PetugasController::class, 'store'])->name('admin.petugas.store');
+    Route::delete('/petugas/{id}', [PetugasController::class, 'destroy'])->name('admin.petugas.destroy');
+
+    // KELOLA PENGGUNA
+    Route::get('/users', [PetugasController::class, 'userIndex'])->name('admin.user.index');
+    Route::get('/users/{id}', [PetugasController::class, 'userShow'])->name('admin.user.show');
+    Route::delete('/users/{id}', [PetugasController::class, 'userDestroy'])->name('admin.user.destroy');
 
 });

@@ -11,12 +11,18 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::all();
+        if (auth()->user()->role == 'petugas') {
+            return view('staff.product.index', compact('products'));
+        }
         return view('admin.products.index', compact('products'));
     }
 
     // FORM TAMBAH
     public function create()
     {
+        if (auth()->user()->role == 'petugas') {
+            return view('staff.product.create');
+        }
         return view('admin.products.create');
     }
 
@@ -43,7 +49,8 @@ class ProductController extends Controller
             'image' => $imageName
         ]);
 
-        return redirect()->route('admin.product.index')
+        $route = auth()->user()->role == 'petugas' ? 'staff.product.index' : 'admin.product.index';
+        return redirect()->route($route)
             ->with('success', 'Produk berhasil ditambahkan');
     }
 
@@ -51,7 +58,10 @@ class ProductController extends Controller
     public function edit($id)
     {
         $product = Product::findOrFail($id);
-        return view('admin.product.edit', compact('product'));
+        if (auth()->user()->role == 'petugas') {
+            return view('staff.product.edit', compact('product'));
+        }
+        return view('admin.products.edit', compact('product'));
     }
 
     // UPDATE
@@ -59,9 +69,18 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
 
-        $product->update($request->all());
+        $data = $request->except('image');
 
-        return redirect()->route('products.index');
+        if ($request->hasFile('image')) {
+            $imageName = time().'.'.$request->image->extension();
+            $request->image->move(public_path('products'), $imageName);
+            $data['image'] = $imageName;
+        }
+
+        $product->update($data);
+
+        $route = auth()->user()->role == 'petugas' ? 'staff.product.index' : 'admin.product.index';
+        return redirect()->route($route)->with('success', 'Produk berhasil diubah');
     }
 
     // HAPUS

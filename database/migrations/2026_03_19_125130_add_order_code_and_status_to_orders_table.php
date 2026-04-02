@@ -14,7 +14,6 @@ return new class extends Migration
     public function up()
 {
     Schema::table('orders', function (Blueprint $table) {
-        $table->string('order_code')->unique()->after('id');
         $table->string('status')->default('dikemas')->after('proof');
     });
 }
@@ -22,7 +21,7 @@ return new class extends Migration
 public function down()
 {
     Schema::table('orders', function (Blueprint $table) {
-        $table->dropColumn(['order_code', 'status']);
+        $table->dropColumn(['status']);
     });
 }
 };
