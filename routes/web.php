@@ -119,6 +119,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [UserController::class, 'profile'])
         ->name('profile');
 
+    Route::post('/profile/update', [UserController::class, 'updateProfile'])
+        ->name('profile.update');
+
+    Route::post('/profile/password', [UserController::class, 'changePassword'])
+        ->name('profile.password');
+
     /*
     |--------------------------------------------------------------------------
     | CART

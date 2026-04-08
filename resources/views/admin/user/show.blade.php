@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <title>Profil Pengguna - Admin</title>
@@ -159,8 +159,18 @@
                 </div>
 
                 <div class="info-group">
-                    <div class="info-label">Username / Email</div>
+                    <div class="info-label">Username</div>
                     <div class="info-value">{{ $user->username }}</div>
+                </div>
+
+                <div class="info-group">
+                    <div class="info-label">Email</div>
+                    <div class="info-value">{{ $user->email ?? '-' }}</div>
+                </div>
+
+                <div class="info-group">
+                    <div class="info-label">Nomor HP</div>
+                    <div class="info-value">{{ $user->phone ?? '-' }}</div>
                 </div>
 
                 <div class="info-group">

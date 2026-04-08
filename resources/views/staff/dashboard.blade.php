@@ -240,16 +240,67 @@
 
             <h2>Selamat Datang {{ Auth::user()->name ?? '' }} 👋</h2>
 
+            <!-- FILTER TANGGAL UNTUK CARD STATISTIK -->
+            @php
+                $months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+                $activeFilter = $filter_day || $filter_month || $filter_year;
+                $filterLabel = '';
+                if ($filter_day)   $filterLabel .= 'Tgl ' . str_pad($filter_day, 2, '0', STR_PAD_LEFT) . ' ';
+                if ($filter_month) $filterLabel .= $months[$filter_month - 1] . ' ';
+                if ($filter_year)  $filterLabel .= $filter_year;
+            @endphp
+
+            <form action="" method="GET" style="margin-top: 24px; display: flex; gap: 10px; align-items: flex-end; background: white; padding: 14px 18px; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); flex-wrap: wrap; border-left: 4px solid #0f5f54;">
+                <span style="font-size: 13px; font-weight: 600; color: #0f5f54; align-self: center; margin-right: 6px;">📊 Filter Statistik:</span>
+                <div>
+                    <label style="font-size: 12px; color: #888; display: block; margin-bottom: 3px;">Tanggal</label>
+                    <select name="filter_day" style="padding: 7px 10px; border: 1px solid #ddd; border-radius: 6px; font-family: 'Poppins', sans-serif; font-size: 13px; background: white; cursor: pointer;">
+                        <option value="">-- Semua --</option>
+                        @for($d = 1; $d <= 31; $d++)
+                            <option value="{{ $d }}" {{ $filter_day == $d ? 'selected' : '' }}>{{ str_pad($d, 2, '0', STR_PAD_LEFT) }}</option>
+                        @endfor
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size: 12px; color: #888; display: block; margin-bottom: 3px;">Bulan</label>
+                    <select name="filter_month" style="padding: 7px 10px; border: 1px solid #ddd; border-radius: 6px; font-family: 'Poppins', sans-serif; font-size: 13px; background: white; cursor: pointer;">
+                        <option value="">-- Semua --</option>
+                        @foreach($months as $i => $bulan)
+                            <option value="{{ $i + 1 }}" {{ $filter_month == ($i + 1) ? 'selected' : '' }}>{{ $bulan }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size: 12px; color: #888; display: block; margin-bottom: 3px;">Tahun</label>
+                    <select name="filter_year" style="padding: 7px 10px; border: 1px solid #ddd; border-radius: 6px; font-family: 'Poppins', sans-serif; font-size: 13px; background: white; cursor: pointer;">
+                        <option value="">-- Semua --</option>
+                        @foreach($years as $year)
+                            <option value="{{ $year }}" {{ $filter_year == $year ? 'selected' : '' }}>{{ $year }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <button type="submit" style="background: #0f5f54; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-family: 'Poppins', sans-serif; font-size: 13px;">Terapkan</button>
+                    <a href="?" style="font-size: 13px; color: #999; text-decoration: none;">Reset</a>
+                </div>
+            </form>
+
             <!-- CARDS -->
             <div class="cards">
 
                 <div class="card">
                     <h4>Total Pendapatan</h4>
+                    @if($activeFilter)
+                        <p style="font-size: 13px; color: #aaa; font-weight: 400; margin-top: 4px; margin-bottom: 0;">{{ trim($filterLabel) }}</p>
+                    @endif
                     <p>Rp {{ number_format($totalPendapatan ?? 0,0,',','.') }}</p>
                 </div>
 
                 <div class="card">
                     <h4>Total Order</h4>
+                    @if($activeFilter)
+                        <p style="font-size: 13px; color: #aaa; font-weight: 400; margin-top: 4px; margin-bottom: 0;">{{ trim($filterLabel) }}</p>
+                    @endif
                     <p>{{ $totalOrder ?? 0 }}</p>
                 </div>
 

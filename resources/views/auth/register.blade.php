@@ -18,8 +18,8 @@
         <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('{{ asset('images/bannerjans4.jpg') }}');">
             <div class="absolute inset-0 bg-[#000000]/60"></div>
         </div>
-        <!-- Diagonal White Shape -->
-        <div class="absolute inset-0 bg-white" style="clip-path: polygon(75% 0, 100% 0, 100% 100%, 55% 100%);"></div>
+        <!-- Diagonal Gradient Shape -->
+        <div class="absolute inset-0" style="clip-path: polygon(75% 0, 100% 0, 100% 100%, 55% 100%); background: linear-gradient(160deg, #0f2e28 0%, #1E5C4F 35%, #2d8a6e 65%, #4ade80 100%);"></div>
     </div>
 
     <!-- Main Content Wrapper -->
@@ -87,7 +87,7 @@
 
     <!-- RIGHT SIDE -->
     <div class="flex items-center justify-center">
-        <div class="bg-white border border-gray-100 w-[420px] p-10 shadow-[0_20px_50px_rgba(0,0,0,0.15)] rounded-2xl transform transition-all duration-300 hover:-translate-y-1">
+        <div class="bg-white/90 backdrop-blur-md border border-white/30 w-[420px] p-10 shadow-[0_20px_60px_rgba(0,0,0,0.25)] rounded-2xl transform transition-all duration-300 hover:-translate-y-1">
 
             <h2 class="text-4xl font-extrabold text-center mb-8 text-transparent bg-clip-text bg-gradient-to-r from-[#1E5C4F] to-[#4ade80]">Daftar</h2>
 

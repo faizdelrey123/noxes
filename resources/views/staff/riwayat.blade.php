@@ -154,42 +154,43 @@
             <h2>Riwayat Pesanan</h2>
 
             <!-- FILTER & SEARCH FORM -->
-            <form action="{{ route('staff.riwayat') }}" method="GET" style="margin-bottom: 20px; display: flex; gap: 10px; align-items: flex-start; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); flex-wrap: wrap;">
+            <form action="{{ route('staff.riwayat') }}" method="GET" style="margin-bottom: 20px; display: flex; gap: 10px; align-items: flex-end; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); flex-wrap: wrap;">
                 <div>
                     <label style="font-size: 13px; color: #666; display: block; margin-bottom: 4px;">Pencarian (ID / Nama)</label>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari pesanan..." style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; width: 220px; font-family: 'Poppins', sans-serif;">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari pesanan..." style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; width: 200px; font-family: 'Poppins', sans-serif;">
                 </div>
                 <div>
-                    <label style="font-size: 13px; color: #666; display: block; margin-bottom: 4px;">Mulai Tanggal</label>
-                    <input type="date" name="start_date" value="{{ request('start_date') }}" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-family: 'Poppins', sans-serif;">
+                    <label style="font-size: 13px; color: #666; display: block; margin-bottom: 4px;">Tanggal</label>
+                    <select name="filter_day" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-family: 'Poppins', sans-serif; background: white; cursor: pointer;">
+                        <option value="">-- Semua --</option>
+                        @for($d = 1; $d <= 31; $d++)
+                            <option value="{{ $d }}" {{ request('filter_day') == $d ? 'selected' : '' }}>{{ str_pad($d, 2, '0', STR_PAD_LEFT) }}</option>
+                        @endfor
+                    </select>
                 </div>
                 <div>
-                    <label style="font-size: 13px; color: #666; display: block; margin-bottom: 4px;">Sampai Tanggal</label>
-                    <input type="date" name="end_date" value="{{ request('end_date') }}" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-family: 'Poppins', sans-serif;">
+                    <label style="font-size: 13px; color: #666; display: block; margin-bottom: 4px;">Bulan</label>
+                    <select name="filter_month" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-family: 'Poppins', sans-serif; background: white; cursor: pointer;">
+                        <option value="">-- Semua --</option>
+                        @foreach(['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'] as $i => $bulan)
+                            <option value="{{ $i + 1 }}" {{ request('filter_month') == ($i + 1) ? 'selected' : '' }}>{{ $bulan }}</option>
+                        @endforeach
+                    </select>
                 </div>
-                <div style="margin-top: 23px;">
+                <div>
+                    <label style="font-size: 13px; color: #666; display: block; margin-bottom: 4px;">Tahun</label>
+                    <select name="filter_year" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-family: 'Poppins', sans-serif; background: white; cursor: pointer;">
+                        <option value="">-- Semua --</option>
+                        @foreach($years as $year)
+                            <option value="{{ $year }}" {{ request('filter_year') == $year ? 'selected' : '' }}>{{ $year }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
                     <button type="submit" style="background: #0f5f54; color: white; border: none; padding: 9px 15px; border-radius: 6px; cursor: pointer; font-family: 'Poppins', sans-serif;">Terapkan</button>
                     <a href="{{ route('staff.riwayat') }}" style="text-decoration: none; color: #666; margin-left: 10px; font-size: 14px;">Reset</a>
                 </div>
             </form>
-
-            <!-- FILTER -->
-            <div class="filter">
-                <a href="{{ route('staff.riwayat', ['filter' => 'harian', 'search' => request('search'), 'start_date' => request('start_date'), 'end_date' => request('end_date')]) }}"
-                   class="{{ request('filter') == 'harian' ? 'active' : '' }}">
-                    Harian
-                </a>
-
-                <a href="{{ route('staff.riwayat', ['filter' => 'bulanan', 'search' => request('search'), 'start_date' => request('start_date'), 'end_date' => request('end_date')]) }}"
-                   class="{{ request('filter') == 'bulanan' ? 'active' : '' }}">
-                    Bulanan
-                </a>
-
-                <a href="{{ route('staff.riwayat', ['search' => request('search'), 'start_date' => request('start_date'), 'end_date' => request('end_date')]) }}"
-                   class="{{ !request('filter') ? 'active' : '' }}">
-                    Semua
-                </a>
-            </div>
 
             <!-- TABLE -->
             <table>

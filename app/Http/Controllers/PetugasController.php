@@ -56,55 +56,74 @@ class PetugasController extends Controller
     | DASHBOARD PETUGAS
     |----------------------------------------
     */
-    public function dashboard()
+    public function dashboard(Request $request)
     {
-        // 🔥 HITUNG DATA
-        $totalPendapatan = Order::where('status', 'selesai')->sum('total');
-        $totalOrder = Order::count();
-        $totalProduk = Product::count();
+        // FILTER TANGGAL untuk stats cards
+        $statsQuery        = Order::where('status', 'selesai');
+        $totalOrderQuery   = Order::query();
 
-        // 🔥 ORDER YANG MENUNGGU APPROVE
+        if ($request->filter_day)   { $statsQuery->whereDay('created_at', $request->filter_day);     $totalOrderQuery->whereDay('created_at', $request->filter_day); }
+        if ($request->filter_month) { $statsQuery->whereMonth('created_at', $request->filter_month); $totalOrderQuery->whereMonth('created_at', $request->filter_month); }
+        if ($request->filter_year)  { $statsQuery->whereYear('created_at', $request->filter_year);   $totalOrderQuery->whereYear('created_at', $request->filter_year); }
+
+        $totalPendapatan = $statsQuery->sum('total');
+        $totalOrder      = $totalOrderQuery->count();
+        $totalProduk     = Product::count();
+
+        // ORDER YANG MENUNGGU APPROVE
         $pendingOrders = Order::with('user')
             ->where('status', 'tertunda')
             ->latest()
             ->get();
 
-        // 🔥 NEW USERS
+        // NEW USERS
         $newUsers = User::where('role', 'user')->latest()->take(5)->get();
 
+        $years        = range(now()->year, now()->year - 4);
+        $filter_day   = $request->filter_day;
+        $filter_month = $request->filter_month;
+        $filter_year  = $request->filter_year;
+
         return view('staff.dashboard', compact(
-            'totalPendapatan',
-            'totalOrder',
-            'totalProduk',
-            'pendingOrders',
-            'newUsers'
+            'totalPendapatan', 'totalOrder', 'totalProduk',
+            'pendingOrders', 'newUsers',
+            'years', 'filter_day', 'filter_month', 'filter_year'
         ));
     }
 
-    public function adminDashboard()
+    public function adminDashboard(Request $request)
     {
-        // 🔥 HITUNG DATA
-        $totalPendapatan = Order::where('status', 'selesai')->sum('total');
-        $totalOrder = Order::count();
-        $totalProduk = Product::count();
-        $totalUser = User::where('role', 'user')->count();
+        // FILTER TANGGAL untuk stats cards
+        $statsQuery      = Order::where('status', 'selesai');
+        $totalOrderQuery = Order::query();
 
-        // 🔥 ORDER YANG MENUNGGU APPROVE
+        if ($request->filter_day)   { $statsQuery->whereDay('created_at', $request->filter_day);     $totalOrderQuery->whereDay('created_at', $request->filter_day); }
+        if ($request->filter_month) { $statsQuery->whereMonth('created_at', $request->filter_month); $totalOrderQuery->whereMonth('created_at', $request->filter_month); }
+        if ($request->filter_year)  { $statsQuery->whereYear('created_at', $request->filter_year);   $totalOrderQuery->whereYear('created_at', $request->filter_year); }
+
+        $totalPendapatan = $statsQuery->sum('total');
+        $totalOrder      = $totalOrderQuery->count();
+        $totalProduk     = Product::count();
+        $totalUser       = User::where('role', 'user')->count();
+
+        // ORDER YANG MENUNGGU APPROVE
         $pendingOrders = Order::with('user')
             ->where('status', 'tertunda')
             ->latest()
             ->get();
 
-        // 🔥 NEW USERS
+        // NEW USERS
         $newUsers = User::where('role', 'user')->latest()->take(5)->get();
 
+        $years        = range(now()->year, now()->year - 4);
+        $filter_day   = $request->filter_day;
+        $filter_month = $request->filter_month;
+        $filter_year  = $request->filter_year;
+
         return view('admin.dashboard', compact(
-            'totalPendapatan',
-            'totalOrder',
-            'totalProduk',
-            'totalUser',
-            'pendingOrders',
-            'newUsers'
+            'totalPendapatan', 'totalOrder', 'totalProduk', 'totalUser',
+            'pendingOrders', 'newUsers',
+            'years', 'filter_day', 'filter_month', 'filter_year'
         ));
     }
 
@@ -180,19 +199,25 @@ class PetugasController extends Controller
 
     $query = Order::with('user');
 
-    // FILTER HARIAN
+    // FILTER HARIAN (hari ini)
     if ($filter == 'harian') {
         $query->whereDate('created_at', now());
     }
 
-    // FILTER BULANAN
+    // FILTER BULANAN (bulan ini)
     if ($filter == 'bulanan') {
         $query->whereMonth('created_at', now()->month);
     }
 
-    // DATE FILTER
-    if ($request->start_date && $request->end_date) {
-        $query->whereBetween('created_at', [$request->start_date . ' 00:00:00', $request->end_date . ' 23:59:59']);
+    // DROPDOWN FILTER: Tanggal, Bulan, Tahun
+    if ($request->filter_day) {
+        $query->whereDay('created_at', $request->filter_day);
+    }
+    if ($request->filter_month) {
+        $query->whereMonth('created_at', $request->filter_month);
+    }
+    if ($request->filter_year) {
+        $query->whereYear('created_at', $request->filter_year);
     }
 
     // SEARCH FILTER
@@ -211,11 +236,15 @@ class PetugasController extends Controller
         ->latest()
         ->get();
 
-    $search = $request->search;
-    $start_date = $request->start_date;
-    $end_date = $request->end_date;
+    $search       = $request->search;
+    $filter_day   = $request->filter_day;
+    $filter_month = $request->filter_month;
+    $filter_year  = $request->filter_year;
 
-    return view('staff.riwayat', compact('orders','filter', 'search', 'start_date', 'end_date'));
+    // Rentang tahun untuk dropdown (5 tahun ke belakang)
+    $years = range(now()->year, now()->year - 4);
+
+    return view('staff.riwayat', compact('orders', 'filter', 'search', 'filter_day', 'filter_month', 'filter_year', 'years'));
 }
 
     /*
