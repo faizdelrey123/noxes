@@ -115,11 +115,11 @@
 
     <!-- SIDEBAR -->
     <div class="sidebar">
-        <div class="logo">NOXÉS</div>
+        <div class="logo">LA PRIMERA</div>
         <p>{{ Auth::check() ? ucfirst(Auth::user()->role) : '' }}</p>
 
         <div class="menu">
-            <a href="{{ Auth::user()->role == 'admin' ? route('admin.dashboard') : route('staff.dashboard') }}">Dashboard</a>
+            <a href="{{ Auth::user()->role == 'admin' ? route('admin.dashboard') : route('staff.dashboard') }}">Dasbor</a>
             <a href="{{ Auth::user()->role == 'admin' ? route('admin.product.index') : route('staff.product.index') }}">Kelola Produk</a>
             <a href="{{ route('staff.status') }}">Status Pemesanan</a>
             <a href="{{ route('staff.riwayat') }}" class="active">Riwayat Pesanan</a>
@@ -153,19 +153,40 @@
 
             <h2>Riwayat Pesanan</h2>
 
+            <!-- FILTER & SEARCH FORM -->
+            <form action="{{ route('staff.riwayat') }}" method="GET" style="margin-bottom: 20px; display: flex; gap: 10px; align-items: flex-start; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); flex-wrap: wrap;">
+                <div>
+                    <label style="font-size: 13px; color: #666; display: block; margin-bottom: 4px;">Pencarian (ID / Nama)</label>
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari pesanan..." style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; width: 220px; font-family: 'Poppins', sans-serif;">
+                </div>
+                <div>
+                    <label style="font-size: 13px; color: #666; display: block; margin-bottom: 4px;">Mulai Tanggal</label>
+                    <input type="date" name="start_date" value="{{ request('start_date') }}" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-family: 'Poppins', sans-serif;">
+                </div>
+                <div>
+                    <label style="font-size: 13px; color: #666; display: block; margin-bottom: 4px;">Sampai Tanggal</label>
+                    <input type="date" name="end_date" value="{{ request('end_date') }}" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-family: 'Poppins', sans-serif;">
+                </div>
+                <div style="margin-top: 23px;">
+                    <button type="submit" style="background: #0f5f54; color: white; border: none; padding: 9px 15px; border-radius: 6px; cursor: pointer; font-family: 'Poppins', sans-serif;">Terapkan</button>
+                    <a href="{{ route('staff.riwayat') }}" style="text-decoration: none; color: #666; margin-left: 10px; font-size: 14px;">Reset</a>
+                </div>
+            </form>
+
             <!-- FILTER -->
             <div class="filter">
-                <a href="?filter=harian"
-                   class="{{ $filter == 'harian' ? 'active' : '' }}">
+                <a href="{{ route('staff.riwayat', ['filter' => 'harian', 'search' => request('search'), 'start_date' => request('start_date'), 'end_date' => request('end_date')]) }}"
+                   class="{{ request('filter') == 'harian' ? 'active' : '' }}">
                     Harian
                 </a>
 
-                <a href="?filter=bulanan"
-                   class="{{ $filter == 'bulanan' ? 'active' : '' }}">
+                <a href="{{ route('staff.riwayat', ['filter' => 'bulanan', 'search' => request('search'), 'start_date' => request('start_date'), 'end_date' => request('end_date')]) }}"
+                   class="{{ request('filter') == 'bulanan' ? 'active' : '' }}">
                     Bulanan
                 </a>
 
-                <a href="{{ route('staff.riwayat') }}">
+                <a href="{{ route('staff.riwayat', ['search' => request('search'), 'start_date' => request('start_date'), 'end_date' => request('end_date')]) }}"
+                   class="{{ !request('filter') ? 'active' : '' }}">
                     Semua
                 </a>
             </div>
@@ -194,6 +215,11 @@
                             <span class="badge {{ $order->status }}">
                                 {{ ucfirst($order->status) }}
                             </span>
+                            @if($order->is_received)
+                                <div style="margin-top: 8px; font-size: 11px; color: #38a169; font-weight: bold;">
+                                    ✔ Telah Diterima User
+                                </div>
+                            @endif
                         </td>
 
                         <td>

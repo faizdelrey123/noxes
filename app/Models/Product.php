@@ -12,6 +12,20 @@ class Product extends Model
         'price',
         'stock',
         'image',
-        'description'
+        'description',
+        'spesifikasi'
     ];
+
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
+    public function getTerjualAttribute()
+    {
+        // Menghitung total quantity terjual yang status ordernya bukan 'tertunda' (berarti sudah diproses minimal)
+        return $this->orderItems()->whereHas('order', function($q) {
+            $q->whereIn('status', ['dikemas', 'dikirim', 'selesai']);
+        })->sum('quantity');
+    }
 }

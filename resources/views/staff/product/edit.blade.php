@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <title>Edit Produk - Petugas</title>
@@ -119,10 +119,10 @@
 
 <div class="container">
     <div class="sidebar">
-        <div class="logo">NOXÉS</div>
+        <div class="logo">LA PRIMERA</div>
         <p>{{ Auth::check() ? ucfirst(Auth::user()->role) : '' }}</p>
         <div class="menu">
-            <a href="{{ Auth::user()->role == 'admin' ? route('admin.dashboard') : route('staff.dashboard') }}">Dashboard</a>
+            <a href="{{ Auth::user()->role == 'admin' ? route('admin.dashboard') : route('staff.dashboard') }}">Dasbor</a>
             <a href="{{ Auth::user()->role == 'admin' ? route('admin.product.index') : route('staff.product.index') }}" class="active">Kelola Produk</a>
             <a href="{{ route('staff.status') }}">Status Pemesanan</a>
             <a href="{{ route('staff.riwayat') }}">Riwayat Pesanan</a>
@@ -139,7 +139,7 @@
         <div class="logout">
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button type="submit">Logout</button>
+                <button type="submit">Keluar</button>
             </form>
         </div>
     </div>
@@ -191,6 +191,11 @@
                     <div class="form-group">
                         <label>Deskripsi Produk</label>
                         <textarea name="description" class="form-control">{{ $product->description }}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Spesifikasi Produk</label>
+                        <textarea name="spesifikasi" class="form-control">{{ $product->spesifikasi }}</textarea>
                     </div>
 
                     <div class="form-group">

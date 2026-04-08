@@ -17,6 +17,13 @@
 
 <div class="max-w-6xl mx-auto py-10 px-6">
 
+    <!-- KEMBALI -->
+    <div class="mb-4">
+        <a href="{{ route('cart.index') }}" class="text-gray-500 font-medium hover:text-[#1E5C4F] flex items-center gap-2 transition inline-flex">
+            ← Kembali ke Keranjang
+        </a>
+    </div>
+
     <h1 class="text-3xl font-bold text-[#1E5C4F] mb-8">
         Checkout
     </h1>
@@ -81,16 +88,29 @@
 
             <!-- SHIPPING -->
             <div class="bg-white rounded-xl p-6 shadow-sm">
-                <p class="font-semibold text-lg text-[#1E5C4F] mb-4">Opsi Pengiriman</p>
+                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-2">
+                    <p class="font-semibold text-lg text-[#1E5C4F]">Opsi Pengiriman</p>
+                    @php
+                        \Carbon\Carbon::setLocale('id');
+                        $tglAwal = \Carbon\Carbon::now()->addDays(5)->translatedFormat('d F Y');
+                        $tglAkhir = \Carbon\Carbon::now()->addDays(7)->translatedFormat('d F Y');
+                    @endphp
+                    <span class="text-sm bg-green-50 text-[#1E5C4F] px-3 py-1.5 rounded-lg border border-green-200 font-medium flex items-center gap-1.5 w-fit">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Estimasi Tiba: {{ $tglAwal }} - {{ $tglAkhir }}
+                    </span>
+                </div>
 
-                <label class="flex justify-between border p-4 rounded-lg mb-3 cursor-pointer">
+                <label class="flex justify-between border p-4 rounded-lg mb-3 cursor-pointer hover:border-[#1E5C4F] transition">
                     <span>JNE (Reguler)</span>
-                    <input type="radio" name="shipping" value="jne">
+                    <input type="radio" name="shipping" value="jne" class="accent-[#1E5C4F]">
                 </label>
 
-                <label class="flex justify-between border p-4 rounded-lg cursor-pointer">
+                <label class="flex justify-between border p-4 rounded-lg cursor-pointer hover:border-[#1E5C4F] transition">
                     <span>J&T (Express)</span>
-                    <input type="radio" name="shipping" value="jnt">
+                    <input type="radio" name="shipping" value="jnt" class="accent-[#1E5C4F]">
                 </label>
             </div>
 

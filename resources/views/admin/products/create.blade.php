@@ -110,7 +110,7 @@
 
 <div class="container">
     <div class="sidebar">
-        <div class="logo">NOXÉS</div>
+        <div class="logo">LA PRIMERA</div>
         <p>{{ Auth::check() ? ucfirst(Auth::user()->role) : '' }}</p>
         <div class="menu">
             <a href="{{ Auth::user()->role == 'admin' ? route('admin.dashboard') : route('staff.dashboard') }}">Dashboard</a>
@@ -152,7 +152,7 @@
                         <div class="col">
                             <div class="form-group">
                                 <label>Nama Produk</label>
-                                <input type="text" name="name" class="form-control" placeholder="Contoh: Noxes Prime Black" required>
+                                <input type="text" name="name" class="form-control" placeholder="Contoh: LA PRIMERA Prime Black" required>
                             </div>
                         </div>
                         <div class="col">

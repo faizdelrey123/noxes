@@ -8,9 +8,17 @@ use App\Models\Product;
 class ProductController extends Controller
 {
     // ADMIN & PETUGAS - LIST
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::all();
+        $query = Product::query();
+
+        if ($request->has('search') && $request->search != '') {
+            $query->where('name', 'like', '%' . $request->search . '%')
+                  ->orWhere('series', 'like', '%' . $request->search . '%');
+        }
+
+        $products = $query->get();
+
         if (auth()->user()->role == 'petugas') {
             return view('staff.product.index', compact('products'));
         }
@@ -46,6 +54,7 @@ class ProductController extends Controller
             'price' => $request->price,
             'stock' => $request->stock,
             'description' => $request->description,
+            'spesifikasi' => $request->spesifikasi,
             'image' => $imageName
         ]);
 
@@ -91,9 +100,16 @@ class ProductController extends Controller
     }
 
     // USER - LIST PRODUK
-    public function userProducts()
+    public function userProducts(\Illuminate\Http\Request $request)
     {
-        $products = Product::all();
+        $query = Product::query();
+
+        if ($request->has('search') && $request->search != '') {
+            $query->where('name', 'like', '%' . $request->search . '%')
+                  ->orWhere('series', 'like', '%' . $request->search . '%');
+        }
+
+        $products = $query->get();
         return view('user.products.index', compact('products'));
     }
 

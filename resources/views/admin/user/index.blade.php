@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <title>Kelola Pengguna - Admin</title>
@@ -52,12 +52,12 @@
 <body>
 <div class="container">
     <div class="sidebar">
-        <div class="logo">NOXÉS</div>
+        <div class="logo">LA PRIMERA</div>
         <p>{{ Auth::check() ? ucfirst(Auth::user()->role) : '' }}</p>
         <div class="menu">
-            <a href="{{ route('admin.dashboard') }}">Dashboard</a>
+            <a href="{{ route('admin.dashboard') }}">Dasbor</a>
             <a href="{{ route('admin.product.index') }}">Kelola Produk</a>
-            <a href="{{ route('staff.status') }}">Status Pemesanan</a>
+
             <a href="{{ route('staff.riwayat') }}">Riwayat Pesanan</a>
             <a href="{{ route('admin.petugas.index') }}">Kelola Petugas</a>
             <a href="{{ route('admin.user.index') }}" class="active">Kelola Pengguna</a>
@@ -65,7 +65,7 @@
         <div class="logout">
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button type="submit">Logout</button>
+                <button type="submit">Keluar</button>
             </form>
         </div>
     </div>

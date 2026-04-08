@@ -69,11 +69,15 @@ class PetugasController extends Controller
             ->latest()
             ->get();
 
+        // 🔥 NEW USERS
+        $newUsers = User::where('role', 'user')->latest()->take(5)->get();
+
         return view('staff.dashboard', compact(
             'totalPendapatan',
             'totalOrder',
             'totalProduk',
-            'pendingOrders'
+            'pendingOrders',
+            'newUsers'
         ));
     }
 
@@ -85,15 +89,22 @@ class PetugasController extends Controller
         $totalProduk = Product::count();
         $totalUser = User::where('role', 'user')->count();
 
-        // 🔥 ORDER TERBARU
-        $orders = Order::with('user')->latest()->take(5)->get();
+        // 🔥 ORDER YANG MENUNGGU APPROVE
+        $pendingOrders = Order::with('user')
+            ->where('status', 'tertunda')
+            ->latest()
+            ->get();
+
+        // 🔥 NEW USERS
+        $newUsers = User::where('role', 'user')->latest()->take(5)->get();
 
         return view('admin.dashboard', compact(
             'totalPendapatan',
             'totalOrder',
             'totalProduk',
             'totalUser',
-            'orders'
+            'pendingOrders',
+            'newUsers'
         ));
     }
 
@@ -108,9 +119,24 @@ class PetugasController extends Controller
 
         // dari tertunda → dikemas
         $order->status = 'dikemas';
+        $order->is_notified = false; // set badge untuk user
         $order->save();
 
         return back()->with('success', 'Pesanan berhasil di-approve');
+    }
+
+    public function cancelOrder(Request $request, $id)
+    {
+        $request->validate([
+            'cancel_reason' => 'required|string|max:1000'
+        ]);
+
+        $order = Order::findOrFail($id);
+        $order->status = 'dibatalkan';
+        $order->cancel_reason = $request->cancel_reason;
+        $order->save();
+
+        return back()->with('success', 'Pesanan berhasil dibatalkan dan alasan tersimpan.');
     }
 
     /*
@@ -118,15 +144,34 @@ class PetugasController extends Controller
     | STATUS PESANAN (SETELAH APPROVE)
     |----------------------------------------
     */
-    public function statusPesanan()
+    public function statusPesanan(Request $request)
     {
-        // ❗ hanya tampilkan yang SUDAH DI-APPROVE
-        $orders = Order::with('user', 'items')
-            ->whereIn('status', ['dikemas', 'dikirim', 'selesai'])
-            ->latest()
-            ->get();
+        $query = Order::with('user', 'items')
+            ->whereIn('status', ['dikemas', 'dikirim', 'selesai']);
 
-        return view('staff.status', compact('orders'));
+        // SEARCH FILTER
+        if ($request->search) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('order_code', 'LIKE', "%{$search}%")
+                  ->orWhereHas('user', function($qu) use ($search) {
+                      $qu->where('name', 'LIKE', "%{$search}%");
+                  });
+            });
+        }
+
+        // DATE FILTER
+        if ($request->start_date && $request->end_date) {
+            $query->whereBetween('created_at', [$request->start_date . ' 00:00:00', $request->end_date . ' 23:59:59']);
+        }
+
+        $orders = $query->latest()->get();
+
+        $search = $request->search;
+        $start_date = $request->start_date;
+        $end_date = $request->end_date;
+
+        return view('staff.status', compact('orders', 'search', 'start_date', 'end_date'));
     }
 
     public function riwayat(Request $request)
@@ -145,12 +190,32 @@ class PetugasController extends Controller
         $query->whereMonth('created_at', now()->month);
     }
 
+    // DATE FILTER
+    if ($request->start_date && $request->end_date) {
+        $query->whereBetween('created_at', [$request->start_date . ' 00:00:00', $request->end_date . ' 23:59:59']);
+    }
+
+    // SEARCH FILTER
+    if ($request->search) {
+        $search = $request->search;
+        $query->where(function($q) use ($search) {
+            $q->where('order_code', 'LIKE', "%{$search}%")
+              ->orWhereHas('user', function($qu) use ($search) {
+                  $qu->where('name', 'LIKE', "%{$search}%");
+              });
+        });
+    }
+
     // hanya tampilkan yang SUDAH diproses
     $orders = $query->whereIn('status', ['dikemas','dikirim','selesai'])
         ->latest()
         ->get();
 
-    return view('staff.riwayat', compact('orders','filter'));
+    $search = $request->search;
+    $start_date = $request->start_date;
+    $end_date = $request->end_date;
+
+    return view('staff.riwayat', compact('orders','filter', 'search', 'start_date', 'end_date'));
 }
 
     /*
@@ -185,7 +250,7 @@ class PetugasController extends Controller
             return $item->price * $item->quantity;
         });
 
-        $ongkir = 10000;
+        $ongkir = 15000;
 
         return view('staff.order_detail', compact('order', 'subtotal', 'ongkir'));
     }

@@ -1,7 +1,7 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
-    <title>Dashboard</title>
+    <title>Dasbor</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -144,14 +144,14 @@
 
     <!-- SIDEBAR -->
     <div class="sidebar">
-    <div class="logo">NOXÉS</div>
+    <div class="logo">LA PRIMERA</div>
     @auth
     <p>{{ ucfirst(Auth::user()->role) }}</p>
 @endauth
 
     <div class="menu">
 
-    <a href="{{ Auth::user()->role == 'admin' ? route('admin.dashboard') : route('staff.dashboard') }}">Dashboard</a>
+    <a href="{{ Auth::user()->role == 'admin' ? route('admin.dashboard') : route('staff.dashboard') }}">Dasbor</a>
 
     <a href="{{ Auth::user()->role == 'admin' ? route('admin.product.index') : route('staff.product.index') }}">Kelola Produk</a>
 
@@ -172,7 +172,7 @@
     <div class="logout-btn">
         <form method="POST" action="{{ route('logout') }}">
             @csrf
-            <button type="submit" class="btn-logout">Logout</button>
+            <button type="submit" class="btn-logout">Keluar</button>
         </form>
     </div>
 </div>

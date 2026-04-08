@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <title>Laporan Penjualan - Petugas</title>
@@ -99,11 +99,11 @@
 <div class="container-wrapper">
     <!-- SIDEBAR -->
     <div class="sidebar">
-        <div class="logo">NOXÉS</div>
+        <div class="logo">LA PRIMERA</div>
         <p>{{ Auth::check() ? ucfirst(Auth::user()->role) : '' }}</p>
 
         <div class="menu">
-            <a href="{{ route('staff.dashboard') }}">Dashboard</a>
+            <a href="{{ route('staff.dashboard') }}">Dasbor</a>
             <a href="{{ route('staff.product.index') }}">Kelola Produk</a>
             <a href="{{ route('staff.status') }}">Status Pemesanan</a>
             <a href="{{ route('staff.riwayat') }}">Riwayat Pesanan</a>
@@ -115,7 +115,7 @@
         <div class="logout">
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button type="submit">Logout</button>
+                <button type="submit">Keluar</button>
             </form>
         </div>
     </div>
@@ -133,7 +133,7 @@
         <div class="main">
             <!-- PRINT HEADER -->
             <div class="report-header">
-                <h1 style="color:#0f5f54; margin:0;">NOXÉS</h1>
+                <h1 style="color:#0f5f54; margin:0;">LA PRIMERA</h1>
                 <p style="margin:5px 0;">Laporan Penjualan Resmi</p>
                 <p style="font-size:12px; color:#666;">Periode: {{ request('start_date') ?? 'Semua' }} s/d {{ request('end_date') ?? 'Sekarang' }}</p>
                 <hr style="border:1px solid #eee; margin:20px 0;">

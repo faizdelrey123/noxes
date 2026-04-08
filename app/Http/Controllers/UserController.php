@@ -48,7 +48,18 @@ class UserController extends Controller
         'done'     => Order::where('user_id', auth()->id())->where('status', 'selesai')->count(),
     ];
 
+    // AMBIL ID PESANAN YANG BELUM DIBACA UNTUK NOTIFIKASI
+    $unnotified_ids = Order::where('user_id', auth()->id())
+        ->where('is_notified', false)
+        ->pluck('id')
+        ->toArray();
+
+    // CLEAR BADGE NOTIFICATIONS (Sehingga badge navbar hilang saat halaman ini dimuat)
+    if (count($unnotified_ids) > 0) {
+        Order::whereIn('id', $unnotified_ids)->update(['is_notified' => true]);
+    }
+
     // 🔥 WAJIB kirim counts ke view
-    return view('user.profile', compact('orders', 'status', 'counts'));
+    return view('user.profile', compact('orders', 'status', 'counts', 'unnotified_ids'));
 }
 }

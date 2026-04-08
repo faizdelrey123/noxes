@@ -135,11 +135,11 @@
 
     <!-- SIDEBAR -->
     <div class="sidebar">
-        <div class="logo">NOXÉS</div>
+        <div class="logo">LA PRIMERA</div>
         <p>{{ Auth::check() ? ucfirst(Auth::user()->role) : '' }}</p>
 
         <div class="menu">
-            <a href="{{ Auth::user()->role == 'admin' ? route('admin.dashboard') : route('staff.dashboard') }}">Dashboard</a>
+            <a href="{{ Auth::user()->role == 'admin' ? route('admin.dashboard') : route('staff.dashboard') }}">Dasbor</a>
             <a href="{{ Auth::user()->role == 'admin' ? route('admin.product.index') : route('staff.product.index') }}">Kelola Produk</a>
             <a href="{{ route('staff.status') }}" class="active">Status Pemesanan</a>
             <a href="{{ route('staff.riwayat') }}">Riwayat Pesanan</a>
@@ -157,7 +157,7 @@
         <div class="logout">
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button type="submit">Logout</button>
+                <button type="submit">Keluar</button>
             </form>
         </div>
     </div>
@@ -172,6 +172,26 @@
         <div class="main">
 
             <h2>Daftar Pesanan</h2>
+
+            <!-- FILTER & SEARCH -->
+            <form action="{{ route('staff.status') }}" method="GET" style="margin-bottom: 20px; display: flex; gap: 10px; align-items: flex-start; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); flex-wrap: wrap;">
+                <div>
+                    <label style="font-size: 13px; color: #666; display: block; margin-bottom: 4px;">Pencarian (ID / Nama)</label>
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari pesanan..." style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; width: 220px; font-family: 'Poppins', sans-serif;">
+                </div>
+                <div>
+                    <label style="font-size: 13px; color: #666; display: block; margin-bottom: 4px;">Mulai Tanggal</label>
+                    <input type="date" name="start_date" value="{{ request('start_date') }}" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-family: 'Poppins', sans-serif;">
+                </div>
+                <div>
+                    <label style="font-size: 13px; color: #666; display: block; margin-bottom: 4px;">Sampai Tanggal</label>
+                    <input type="date" name="end_date" value="{{ request('end_date') }}" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-family: 'Poppins', sans-serif;">
+                </div>
+                <div style="margin-top: 23px;">
+                    <button type="submit" style="background: #0f5f54; color: white; border: none; padding: 9px 15px; border-radius: 6px; cursor: pointer; font-family: 'Poppins', sans-serif;">Terapkan</button>
+                    <a href="{{ route('staff.status') }}" style="text-decoration: none; color: #666; margin-left: 10px; font-size: 14px;">Reset</a>
+                </div>
+            </form>
 
             @if(session('success'))
                 <p style="color:green">{{ session('success') }}</p>
@@ -207,29 +227,41 @@
                             <span class="badge {{ $order->status }}">
                                 {{ ucfirst($order->status) }}
                             </span>
+                            @if($order->is_received)
+                                <div style="margin-top: 8px; font-size: 11px; color: #38a169; font-weight: bold;">
+                                    ✔ Telah Diterima User
+                                </div>
+                            @endif
                         </td>
 
                         <td>
-                            <form action="{{ route('orders.updateStatus', $order->id) }}" method="POST">
-                                @csrf
+                            @if($order->is_received)
+                                <div style="font-size: 13px; color: #38a169; font-weight: bold; background: #e6ffed; padding: 10px; border-radius: 6px; text-align: center; border: 1px solid #38a169;">
+                                    Terkunci<br><span style="font-size: 11px; font-weight: normal;">(Sudah Diterima)</span>
+                                </div>
+                            @else
+                                <form action="{{ route('orders.updateStatus', $order->id) }}" method="POST" style="display: flex; flex-direction: column; gap: 8px; text-align: left;">
+                                    @csrf
 
-                                <select name="status" onchange="this.form.submit()">
+                                    <select name="status" style="width: 100%; border: 1px solid #ccc; font-size: 13px;">
+                                        <option value="tertunda" {{ $order->status == 'tertunda' ? 'selected' : '' }}>Menunggu</option>
+                                        <option value="dikemas" {{ $order->status == 'dikemas' ? 'selected' : '' }}>Dikemas</option>
+                                        <option value="dikirim" {{ $order->status == 'dikirim' ? 'selected' : '' }}>Dikirim</option>
+                                        <option value="selesai" {{ $order->status == 'selesai' ? 'selected' : '' }}>Selesai</option>
+                                    </select>
 
-                                    <option value="dikemas" {{ $order->status == 'dikemas' ? 'selected' : '' }}>
-                                        Dikemas
-                                    </option>
+                                    <select name="tracking_level" style="width: 100%; border: 1px solid #ccc; font-size: 12px; background: #fdfdfd;">
+                                        <option value="0" {{ $order->tracking_level == 0 ? 'selected' : '' }}>- Info Lacak -</option>
+                                        <option value="1" {{ $order->tracking_level == 1 ? 'selected' : '' }}>Menyiapkan pengiriman</option>
+                                        <option value="2" {{ $order->tracking_level == 2 ? 'selected' : '' }}>Paket di-pickup</option>
+                                        <option value="3" {{ $order->tracking_level == 3 ? 'selected' : '' }}>Sedang transit</option>
+                                        <option value="4" {{ $order->tracking_level == 4 ? 'selected' : '' }}>Dalam pengiriman</option>
+                                        <option value="5" {{ $order->tracking_level == 5 ? 'selected' : '' }}>Diterima</option>
+                                    </select>
 
-                                    <option value="dikirim" {{ $order->status == 'dikirim' ? 'selected' : '' }}>
-                                        Dikirim
-                                    </option>
-
-                                    <option value="selesai" {{ $order->status == 'selesai' ? 'selected' : '' }}>
-                                        Selesai
-                                    </option>
-
-                                </select>
-
-                            </form>
+                                    <button type="submit" style="background:#0f5f54; color:white; border:none; padding:6px; border-radius:4px; font-size:12px; cursor:pointer; font-weight: 500; font-family:'Poppins', sans-serif;">Simpan Update</button>
+                                </form>
+                            @endif
                         </td>
 
                     </tr>

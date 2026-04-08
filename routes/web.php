@@ -83,23 +83,7 @@ Route::get('/register', [AuthController::class, 'showRegister'])
 Route::post('/register', [AuthController::class, 'register']);
 
 
-/*
-|--------------------------------------------------------------------------
-| CART
-|--------------------------------------------------------------------------
-*/
 
-Route::get('/cart', [App\Http\Controllers\CartController::class, 'index'])
-    ->name('cart.index');
-
-Route::post('/cart/add/{id}', [App\Http\Controllers\CartController::class, 'add'])
-    ->name('cart.add');
-
-Route::post('/cart/update/{id}', [App\Http\Controllers\CartController::class, 'update'])
-    ->name('cart.update');
-
-Route::delete('/cart/remove/{id}', [App\Http\Controllers\CartController::class, 'remove'])
-    ->name('cart.remove');
 
 
 /*
@@ -137,6 +121,24 @@ Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
+    | CART
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/cart', [App\Http\Controllers\CartController::class, 'index'])
+        ->name('cart.index');
+
+    Route::post('/cart/add/{id}', [App\Http\Controllers\CartController::class, 'add'])
+        ->name('cart.add');
+
+    Route::post('/cart/update/{id}', [App\Http\Controllers\CartController::class, 'update'])
+        ->name('cart.update');
+
+    Route::delete('/cart/remove/{id}', [App\Http\Controllers\CartController::class, 'remove'])
+        ->name('cart.remove');
+
+    /*
+    |--------------------------------------------------------------------------
     | CHECKOUT
     |--------------------------------------------------------------------------
     */
@@ -162,6 +164,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders/{id}/struk', [OrderController::class, 'struk'])
         ->name('orders.struk');
 
+    Route::post('/orders/{id}/receive', [OrderController::class, 'receiveOrder'])
+        ->name('orders.receive');
+
 });
 
 
@@ -184,6 +189,10 @@ Route::middleware(['auth'])->group(function () {
     // APPROVE PESANAN (DARI DASHBOARD)
     Route::post('/staff/approve/{id}', [PetugasController::class, 'approve'])
         ->name('staff.approve');
+
+    // BATALKAN PESANAN
+    Route::post('/staff/cancel/{id}', [PetugasController::class, 'cancelOrder'])
+        ->name('staff.cancel');
 
     // DETAIL PESANAN STAFF
     Route::get('/staff/orders/{id}', [PetugasController::class, 'showOrder'])

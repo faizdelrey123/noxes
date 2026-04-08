@@ -27,7 +27,7 @@ class CheckoutController extends Controller
             $total += $item['price'] * $item['quantity'];
         }
 
-        $ongkir = 10000;
+        $ongkir = 15000;
         $grandTotal = $total + $ongkir;
 
         return view('checkout', compact(
@@ -70,7 +70,7 @@ class CheckoutController extends Controller
             $total += $item['price'] * $item['quantity'];
         }
 
-        $ongkir = 10000;
+        $ongkir = 15000;
         $grandTotal = $total + $ongkir;
 
         // Upload bukti pembayaran

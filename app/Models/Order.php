@@ -17,7 +17,10 @@ class Order extends Model
         'payment',
         'total',
         'proof',
-        'status'        // ✅ tambah status
+        'status',       // ✅ tambah status
+        'cancel_reason', // ✅ alasan pembatalan
+        'tracking_level',
+        'is_received'
     ];
 
     // ===============================

@@ -10,6 +10,9 @@ class OrderController extends Controller
 {
     public function index(Request $request)
     {
+        // CLEAR BADGE NOTIFICATIONS
+        \App\Models\Order::where('user_id', auth()->id())->where('is_notified', false)->update(['is_notified' => true]);
+
         $query = Order::with('items.product')->where('user_id', Auth::id());
 
         // FILTER TANGGAL
@@ -29,6 +32,9 @@ class OrderController extends Controller
 
     public function profile(Request $request)
 {
+    // CLEAR BADGE NOTIFICATIONS
+    \App\Models\Order::where('user_id', auth()->id())->where('is_notified', false)->update(['is_notified' => true]);
+
     $status = $request->status ?? 'tertunda';
 
     $map = [
@@ -69,10 +75,22 @@ class OrderController extends Controller
 {
     $order = Order::findOrFail($id);
 
-    $order->status = $request->status;
+    if ($order->is_received) {
+        return back()->with('error', 'Pesanan tidak dapat diubah karena telah diterima oleh pengguna.');
+    }
+
+    if ($request->has('status')) {
+        $order->status = $request->status;
+    }
+    
+    if ($request->has('tracking_level')) {
+        $order->tracking_level = $request->tracking_level;
+    }
+
+    $order->is_notified = false; // set badge untuk user
     $order->save();
 
-    return back()->with('success', 'Status berhasil diupdate');
+    return back()->with('success', 'Status dan pelacakan pesanan berhasil diupdate');
 }
 
 public function show($id)
@@ -86,8 +104,21 @@ public function show($id)
     });
 
     // ongkir (contoh)
-    $ongkir = 10000;
+    $ongkir = 15000;
 
     return view('user.order_detail', compact('order','subtotal','ongkir'));
 }
+
+    public function receiveOrder($id)
+    {
+        $order = Order::where('user_id', Auth::id())->findOrFail($id);
+
+        if ($order->status == 'selesai' && !$order->is_received) {
+            $order->is_received = true;
+            $order->tracking_level = 5; // Set tracking to 'Diterima'
+            $order->save();
+        }
+
+        return back()->with('success', 'Pesanan telah diterima');
+    }
 }

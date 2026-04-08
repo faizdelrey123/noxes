@@ -27,4 +27,12 @@ class OrderItem extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    public function getPriceAttribute($value)
+    {
+        if ($value > 0) {
+            return $value;
+        }
+        return $this->product ? $this->product->price : 0;
+    }
 }
